@@ -10,8 +10,8 @@ import java.time.ZonedDateTime;
 
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Data
 public class Compte_Bancaire implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
