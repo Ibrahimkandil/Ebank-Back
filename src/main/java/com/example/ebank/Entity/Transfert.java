@@ -7,8 +7,8 @@ import java.time.ZonedDateTime;
 
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Data
 public class Transfert implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
