@@ -34,6 +34,4 @@ public class Compte_Bancaire implements Serializable {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
-
-
 }
