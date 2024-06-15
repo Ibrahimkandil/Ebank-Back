@@ -1,6 +1,9 @@
 package com.example.ebank.Entity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 @Getter
@@ -22,6 +25,7 @@ public class contrat_prete implements Serializable {
     @Column(name="mensualites")
     private double mensualites;
     @Column(name="FrequencePaiement")
+    @Enumerated(EnumType.STRING)
     private frequencePaiement frequencePaiement;
     @Column(name="TypeInteret")
     private String typeInteret;
@@ -30,6 +34,7 @@ public class contrat_prete implements Serializable {
     @Column(name="FraisDossier")
     private double fraisDossier;
     @Column(name="Etat_Contrat")
+    @Enumerated(EnumType.STRING)
     private etatContrat etatContrat;
     @Column(name="informationsAssurance")
     private String informationsAssurance;

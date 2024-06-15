@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -24,6 +23,7 @@ public class Compte_Bancaire implements Serializable {
     @Column(name = "Date_d'ouverture")
     private ZonedDateTime opening_date;
     @Column(name = "Type_de_compte")
+    @Enumerated(EnumType.STRING)
     private Type_Compte account_type;
     @Column(name = "Date_de_fermeture")
     private String closing_date;

@@ -1,6 +1,9 @@
 package com.example.ebank.Entity;
-import lombok.*;
+
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;

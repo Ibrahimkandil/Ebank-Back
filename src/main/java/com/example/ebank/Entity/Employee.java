@@ -2,17 +2,22 @@ package com.example.ebank.Entity;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
+@Data
 public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +42,14 @@ public class Employee implements Serializable {
     @Column(name = "Prénom")
     private String last_name;
     @Column(name = "UserCode")
-    private String identification_number;
+    private String IdentificationNumber;
     @Column(name = "image_data")
     private byte[] image_data;
     @ManyToOne
     private Agence agence;
+    @Column(name="Sexe")
+    @Enumerated(EnumType.STRING)
+    private genre Sexe;
 
     public String Genrateur_Motsdupasse(){
         String password = "0123456789";
@@ -62,4 +70,8 @@ public class Employee implements Serializable {
         }
         return sb.toString();
     }
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
+    }
+
 }

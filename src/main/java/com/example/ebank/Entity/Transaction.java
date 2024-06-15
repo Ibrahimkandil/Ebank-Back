@@ -22,6 +22,8 @@ public class Transaction implements Serializable {
     @JoinColumn(name = "client_id")
     private Client client;
     @Column(name = "Type")
+    @Enumerated(EnumType.STRING)
+
     private type_transaction type;
     @Column(name = "Date_Expiration")
     private ZonedDateTime Date_Expiration;
