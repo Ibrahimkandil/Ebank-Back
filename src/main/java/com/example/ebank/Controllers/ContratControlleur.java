@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/employee/contrat")
 public class ContratControlleur {
     @Autowired
     private ContratService contratService;

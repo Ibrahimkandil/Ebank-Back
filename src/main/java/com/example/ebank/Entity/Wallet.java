@@ -19,7 +19,7 @@ public class Wallet implements Serializable {
     private String currency;
     @Column(name="date_modification")
     private String date_modification;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
     @Column(name="balance")

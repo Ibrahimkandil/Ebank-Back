@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/wallets")
+@RequestMapping("/api/v1/client/wallets")
 public class WalletController {
 
     @Autowired
