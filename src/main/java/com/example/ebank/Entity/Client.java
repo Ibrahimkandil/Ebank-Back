@@ -59,6 +59,8 @@ public class Client implements Serializable {
     private List<Reclamation> reclamations;
     @OneToMany(mappedBy = "client")
     private List<Transaction> transactions;
+    @OneToMany(mappedBy = "client")
+    private List<Wallet> wallets;
 
     public String Genrateur_Motsdupasse(){
         String password = "0123456789";

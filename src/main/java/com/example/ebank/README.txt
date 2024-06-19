@@ -83,13 +83,13 @@ url: "http://localhost:8080/ebank/api/v1/auth/signin"
 les utilisateur sont divisée par leurs code d'identification :
 Si le code d'Identification commence par "0" : c'est un admin
 Si le code d'Identification commence por "1" : c'est un Employée
-Sinon : c'est un Client
 *//
 Body/JSON :  {
            "identificationnumber":"0001"(écrire le numéro d'identification du utilisateur),
 
            "password":"0000"
-        }
+        }Sinon : c'est un Client
+
 
 JWT token => est une token génrer qui contient le nom du utilisateur/son numéro d'identification + date du création + date d'expiration
 par exemple : (un token génrer)
