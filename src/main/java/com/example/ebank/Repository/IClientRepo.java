@@ -18,7 +18,9 @@ public interface IClientRepo extends JpaRepository<Client, Long> {
     @Query("SELECT c FROM Client c WHERE c.IdentificationNumber = :identification ")
 
     Optional<Client> findByIdentificationnumber(@Param("identification") String id);
+    @Query("SELECT c FROM Client c WHERE c.Email = :email ")
 
+Optional<Client> findByEmail(@Param("email") String email);
 
 
 //    Optional<Client> findByIdentificationNumber(String id);

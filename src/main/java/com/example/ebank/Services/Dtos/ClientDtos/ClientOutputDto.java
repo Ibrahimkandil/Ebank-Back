@@ -13,6 +13,7 @@ import java.util.Objects;
 
 @Getter
 public class ClientOutputDto implements Serializable {
+    private Long id;
     private String last_name;
     private String first_name;
     private String Address;
@@ -27,6 +28,14 @@ public class ClientOutputDto implements Serializable {
     private EmployeePOSTOutputDto addedBy;
     private Reclamation[] reclamations;
     private Transaction[] transactions;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getLast_name() {
         return last_name;
@@ -145,26 +154,31 @@ public class ClientOutputDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientOutputDto that = (ClientOutputDto) o;
-        return Objects.equals(last_name, that.last_name) && Objects.equals(first_name, that.first_name)  && Objects.equals(Address, that.Address) && Objects.equals(Phone, that.Phone) && Objects.equals(Email, that.Email) && Objects.equals(Date_of_birth, that.Date_of_birth) && Objects.equals(Sexe, that.Sexe) && Objects.equals(Date_d_ajout, that.Date_d_ajout) && Objects.equals(etatCivil, that.etatCivil) && Objects.equals(statutEmploi, that.statutEmploi) && Objects.equals(addedBy, that.addedBy) && Arrays.equals(reclamations, that.reclamations) && Arrays.equals(transactions, that.transactions);
+        return Objects.equals(id, that.id) && Objects.equals(last_name, that.last_name) && Objects.equals(first_name, that.first_name) && Objects.equals(Address, that.Address) && Objects.equals(Phone, that.Phone) && Objects.equals(Email, that.Email) && Objects.equals(Date_of_birth, that.Date_of_birth) && Objects.equals(Sexe, that.Sexe) && Objects.equals(Date_d_ajout, that.Date_d_ajout) && Arrays.equals(image_data, that.image_data) && Objects.equals(etatCivil, that.etatCivil) && Objects.equals(statutEmploi, that.statutEmploi) && Objects.equals(addedBy, that.addedBy) && Arrays.equals(reclamations, that.reclamations) && Arrays.equals(transactions, that.transactions);
     }
 
     @Override
     public int hashCode() {
-        return  Objects.hash(last_name, first_name, Address, Phone, Email, Date_of_birth, Sexe, Date_d_ajout, etatCivil, statutEmploi, addedBy);
-
+        int result = Objects.hash(id, last_name, first_name, Address, Phone, Email, Date_of_birth, Sexe, Date_d_ajout, etatCivil, statutEmploi, addedBy);
+        result = 31 * result + Arrays.hashCode(image_data);
+        result = 31 * result + Arrays.hashCode(reclamations);
+        result = 31 * result + Arrays.hashCode(transactions);
+        return result;
     }
 
     @Override
     public String toString() {
         return "ClientOutputDto{" +
-                "last_name='" + last_name + '\'' +
+                "id=" + id +
+                ", last_name='" + last_name + '\'' +
                 ", first_name='" + first_name + '\'' +
-                 ", Address='" + Address + '\'' +
+                ", Address='" + Address + '\'' +
                 ", Phone='" + Phone + '\'' +
                 ", Email='" + Email + '\'' +
                 ", Date_of_birth='" + Date_of_birth + '\'' +
                 ", Sexe='" + Sexe + '\'' +
                 ", Date_d_ajout=" + Date_d_ajout +
+                ", image_data=" + Arrays.toString(image_data) +
                 ", etatCivil='" + etatCivil + '\'' +
                 ", statutEmploi='" + statutEmploi + '\'' +
                 ", addedBy=" + addedBy +
