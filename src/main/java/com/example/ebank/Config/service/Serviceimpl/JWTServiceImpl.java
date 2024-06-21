@@ -21,7 +21,7 @@ public class JWTServiceImpl implements JWTService {
     public String generateTokenclient(Client client){
         return Jwts.builder().setSubject(client.getFirst_name()+" "+client.getLast_name()+":"+client.getIdentificationNumber())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 6))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60*3))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

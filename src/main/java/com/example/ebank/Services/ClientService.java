@@ -12,7 +12,14 @@ import com.example.ebank.Services.Mappers.ClientMappers.ClientOutputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.spec.KeySpec;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,6 +98,37 @@ public class ClientService implements IClientService {
         return client;
     }
 
+    public String resetPassword(Long id ,String password) {
+        String decryptedPassword = decrypt(password);
+        Client client = iclientRepo.findById(id).get();
+        client.setPassword(decryptedPassword);
+        iclientRepo.save(client);
+        return "Password reset successfully";
+    }
+    public Client getClientByEmail(String email){
+        Client client = iclientRepo.findByEmail(email).get();
+        return client;
+    }
 
+    private  static final   String  SECRET_KEY = "verification"; // Replace with your actual secret key
+    private static final String SALT = "your_salt"; // Replace with your actual salt
+
+    public static String decrypt(String strToDecrypt) {
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
+            SecretKey tmp = factory.generateSecret(spec);
+            SecretKey secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
+            return new String(decryptedBytes);
+        } catch (Exception e) {
+            System.out.println("Error while decrypting: " + e.toString());
+            return null;
+        }
+    }
 }
 

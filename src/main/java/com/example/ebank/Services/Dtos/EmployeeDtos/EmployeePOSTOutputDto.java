@@ -6,10 +6,18 @@ import com.example.ebank.Entity.genre;
 import java.util.Objects;
 
 public class EmployeePOSTOutputDto {
+    private Long id;
     private String name;
     private String mail;
     private String last_name;
     private Agence agence;
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -44,25 +52,24 @@ public class EmployeePOSTOutputDto {
         this.agence = agence;
     }
 
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeePOSTOutputDto that = (EmployeePOSTOutputDto) o;
-        return Objects.equals(name, that.name) && Objects.equals(mail, that.mail)  && Objects.equals(last_name, that.last_name) && Objects.equals(agence, that.agence);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(mail, that.mail) && Objects.equals(last_name, that.last_name) && Objects.equals(agence, that.agence);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, mail, last_name, agence);
+        return Objects.hash(id, name, mail, last_name, agence);
     }
 
     @Override
     public String toString() {
         return "EmployeePOSTOutputDto{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", mail='" + mail + '\'' +
                 ", last_name='" + last_name + '\'' +
                 ", agence=" + agence +
