@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReclamationService implements IreclamationService {
 
     @Autowired
-    IreclamationRepo ireclamationRepo ;
+    private IreclamationRepo ireclamationRepo;
+
     @Override
     public List<Reclamation> retrieveAllReclamations() {
         return ireclamationRepo.findAll();
@@ -23,18 +25,37 @@ public class ReclamationService implements IreclamationService {
     }
 
     @Override
-    public Reclamation updateReclamation(Reclamation reclamation) {
-        return null;
+    public Reclamation updateReclamation(Long id, Reclamation newReclamationData) {
+        Optional<Reclamation> optionalReclamation = ireclamationRepo.findById(id);
+        if (optionalReclamation.isPresent()) {
+            Reclamation existingReclamation = optionalReclamation.get();
+            // Update existingReclamation with data from newReclamationData
+            existingReclamation.setComplainantName(newReclamationData.getComplainantName());
+            existingReclamation.setSubject(newReclamationData.getSubject());
+            existingReclamation.setDescription(newReclamationData.getDescription());
+            existingReclamation.setDate(newReclamationData.getDate());
+            existingReclamation.setEmail(newReclamationData.getEmail());
+            existingReclamation.setPhoneNumber(newReclamationData.getPhoneNumber());
+            return ireclamationRepo.save(existingReclamation);
+        } else {
+            // Handle case where reclamation with given id is not found
+            return null;
+        }
     }
 
     @Override
     public Reclamation retrieveReclamation(Long id) {
-        return ireclamationRepo.findById(id).get();
+        return ireclamationRepo.findById(id).orElse(null);  // or throw an exception
     }
 
     @Override
     public String deleteReclamation(Long id) {
-        ireclamationRepo.deleteById(id);
-        return "Réclamation supprimée ";
+        Optional<Reclamation> existingReclamation = ireclamationRepo.findById(id);
+        if (existingReclamation.isPresent()) {
+            ireclamationRepo.deleteById(id);
+            return "Réclamation supprimée";
+        } else {
+            return "Réclamation non trouvée";
+        }
     }
 }
