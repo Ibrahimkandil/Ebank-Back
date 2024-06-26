@@ -27,4 +27,6 @@ public class Transaction implements Serializable {
     private type_transaction type;
     @Column(name = "Date_Expiration")
     private ZonedDateTime Date_Expiration;
+    @ManyToOne
+    private Compte_Bancaire compte_Bancaire;
 }

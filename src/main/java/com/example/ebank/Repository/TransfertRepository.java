@@ -1,7 +1,6 @@
 package com.example.ebank.Repository;
 
-import com.example.ebank.Entity.Demande;
-import com.example.ebank.Entity.Reclamation;
+import com.example.ebank.Entity.Transfert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,8 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface IreclamationRepo extends JpaRepository<Reclamation,Long> {
-    @Query("SELECT r FROM Reclamation r WHERE r.client.id = :id")
-    Optional<List<Reclamation>> findByIdClient(@Param("id") long id);
-
+public interface TransfertRepository extends JpaRepository<Transfert, Long> {
+    @Query("SELECT t FROM Transfert t WHERE t.idCompteDestinations.id = :id OR t.idCompteSource.id = :id")
+    Optional<List<Transfert>> findByIdClient(@Param("id") long id);
 }

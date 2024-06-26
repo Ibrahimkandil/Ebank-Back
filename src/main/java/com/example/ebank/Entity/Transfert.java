@@ -26,6 +26,8 @@ public class Transfert implements Serializable {
     @ManyToOne
     @JoinColumn(name = "Compte Destinataire")
     private Client idCompteDestinations;
+    @ManyToOne
+    private Compte_Bancaire compte_Bancaire;
 
 }
 

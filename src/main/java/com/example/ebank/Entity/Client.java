@@ -55,12 +55,7 @@ public class Client implements Serializable {
     @ManyToOne // Many clients can be added by one employee
     @JoinColumn(name = "employee_id") // This will create a column in the Client table named employee_id to store the foreign key
     private Employee addedBy;
-    @OneToMany(mappedBy = "client")
-    private List<Reclamation> reclamations;
-    @OneToMany(mappedBy = "client")
-    private List<Transaction> transactions;
-    @OneToMany(mappedBy = "client")
-    private List<Wallet> wallets;
+
 
     public String Genrateur_Motsdupasse(){
         String password = "0123456789";
