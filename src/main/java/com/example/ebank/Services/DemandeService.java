@@ -1,8 +1,7 @@
 package com.example.ebank.Services;
 
 import com.example.ebank.Entity.Demande;
-import com.example.ebank.Entity.Wallet;
-import com.example.ebank.Repository.DemandeReoisitory;
+import com.example.ebank.Repository.DemandeRepoisitory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,25 +10,25 @@ import java.util.Optional;
 @Service
 public class DemandeService implements IdemandeService{
     @Autowired
-    private DemandeReoisitory demandeReoisitory;
+    private DemandeRepoisitory demandeRepoisitory;
     @Override
     public List<Demande> getAlldemandes() {
-        return  demandeReoisitory.findAll();
+        return  demandeRepoisitory.findAll();
     }
 
     @Override
     public Optional<Demande> getdemandeById(Long id) {
-        return demandeReoisitory.findById(id);
+        return demandeRepoisitory.findById(id);
     }
 
     @Override
     public Demande createdemande(Demande demande) {
-        return demandeReoisitory.save(demande);
+        return demandeRepoisitory.save(demande);
     }
 
     @Override
     public Demande updatedemande(Long id, Demande newdemandeData) {
-        Optional<Demande> optionalDemande = demandeReoisitory.findById(id);
+        Optional<Demande> optionalDemande = demandeRepoisitory.findById(id);
         if (optionalDemande.isPresent()) {
             Demande existingDemande = optionalDemande.get();
 
@@ -39,7 +38,7 @@ public class DemandeService implements IdemandeService{
             existingDemande.setType(newdemandeData.getType());
             existingDemande.setRaisonDemandeCredit(newdemandeData.getRaisonDemandeCredit());
 
-            return demandeReoisitory.save(existingDemande);
+            return demandeRepoisitory.save(existingDemande);
         } else {
             return null;
         }    }
@@ -47,7 +46,7 @@ public class DemandeService implements IdemandeService{
 
     @Override
     public void deletedemande(Long id) {
-        demandeReoisitory.deleteById(id);
+        demandeRepoisitory.deleteById(id);
 
     }
 

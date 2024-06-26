@@ -1,5 +1,6 @@
 package com.example.ebank.Services.Dtos.ClientDtos;
 
+import com.example.ebank.Entity.Compte_Bancaire;
 import com.example.ebank.Entity.Employee;
 import com.example.ebank.Entity.Reclamation;
 import com.example.ebank.Entity.Transaction;
@@ -28,6 +29,15 @@ public class ClientOutputDto implements Serializable {
     private EmployeePOSTOutputDto addedBy;
     private Reclamation[] reclamations;
     private Transaction[] transactions;
+    private Compte_Bancaire[] comptes;
+
+    public Compte_Bancaire[] getcomptes() {
+        return comptes;
+    }
+
+    public void setcomptes(Compte_Bancaire[] comptes) {
+        this.comptes = comptes;
+    }
 
     public Long getId() {
         return id;
@@ -154,7 +164,7 @@ public class ClientOutputDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientOutputDto that = (ClientOutputDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(last_name, that.last_name) && Objects.equals(first_name, that.first_name) && Objects.equals(Address, that.Address) && Objects.equals(Phone, that.Phone) && Objects.equals(Email, that.Email) && Objects.equals(Date_of_birth, that.Date_of_birth) && Objects.equals(Sexe, that.Sexe) && Objects.equals(Date_d_ajout, that.Date_d_ajout) && Arrays.equals(image_data, that.image_data) && Objects.equals(etatCivil, that.etatCivil) && Objects.equals(statutEmploi, that.statutEmploi) && Objects.equals(addedBy, that.addedBy) && Arrays.equals(reclamations, that.reclamations) && Arrays.equals(transactions, that.transactions);
+        return Objects.equals(id, that.id) && Objects.equals(last_name, that.last_name) && Objects.equals(first_name, that.first_name) && Objects.equals(Address, that.Address) && Objects.equals(Phone, that.Phone) && Objects.equals(Email, that.Email) && Objects.equals(Date_of_birth, that.Date_of_birth) && Objects.equals(Sexe, that.Sexe) && Objects.equals(Date_d_ajout, that.Date_d_ajout) && Arrays.equals(image_data, that.image_data) && Objects.equals(etatCivil, that.etatCivil) && Objects.equals(statutEmploi, that.statutEmploi) && Objects.equals(addedBy, that.addedBy) && Arrays.equals(reclamations, that.reclamations)&& Arrays.equals(comptes, that.comptes)  && Arrays.equals(transactions, that.transactions);
     }
 
     @Override
@@ -163,6 +173,7 @@ public class ClientOutputDto implements Serializable {
         result = 31 * result + Arrays.hashCode(image_data);
         result = 31 * result + Arrays.hashCode(reclamations);
         result = 31 * result + Arrays.hashCode(transactions);
+        result = 31 * result + Arrays.hashCode(comptes);
         return result;
     }
 
@@ -184,6 +195,7 @@ public class ClientOutputDto implements Serializable {
                 ", addedBy=" + addedBy +
                 ", reclamations=" + Arrays.toString(reclamations) +
                 ", transactions=" + Arrays.toString(transactions) +
+                ", comptes=" + Arrays.toString(comptes) +
                 '}';
     }
 }

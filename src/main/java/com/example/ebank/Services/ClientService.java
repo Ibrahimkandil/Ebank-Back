@@ -1,14 +1,24 @@
 package com.example.ebank.Services;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Employee;
-import com.example.ebank.Repository.IClientRepo;
-import com.example.ebank.Repository.IEmployeeRepo;
+import com.example.ebank.Entity.*;
+import com.example.ebank.Repository.*;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
+import com.example.ebank.Services.Dtos.Comptes_BancaireDtos.Compte_BancaireOutputDto;
+import com.example.ebank.Services.Dtos.DemandeDtos.DemandeOutputDto;
+import com.example.ebank.Services.Dtos.ReclamationDtos.ReclamationOutputDto;
+import com.example.ebank.Services.Dtos.TransactionDtos.TransactionOutputDto;
+import com.example.ebank.Services.Dtos.TransfertDtos.TransfertOutputDto;
+import com.example.ebank.Services.Dtos.contrat_preteDtos.contrat_preteOutputDto;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientMapper;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientOutputMapper;
+import com.example.ebank.Services.Mappers.Compte_BancaireMappers.Compte_BancaireOutputMapper;
+import com.example.ebank.Services.Mappers.DemandeMappers.DemandeOutputMapper;
+import com.example.ebank.Services.Mappers.ReclamationMappers.ReclamationOutputMapper;
+import com.example.ebank.Services.Mappers.TransactionMappers.TransactionOutputMapper;
+import com.example.ebank.Services.Mappers.TransfertMappers.TransfertOutputMapper;
+import com.example.ebank.Services.Mappers.contrat_preteMappers.contrat_preteOutputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +29,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.spec.KeySpec;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +46,31 @@ public class ClientService implements IClientService {
     private ClientInputMapper clientInputMapper;
     @Autowired
     private IEmployeeRepo employeeRepo;
+    @Autowired
+    private TransfertRepository transfertRepository;
+    @Autowired
+    private Compte_BancaireRepository compte_bancaireRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
+    private TransactionOutputMapper transactionOutputMapper;
+    @Autowired
+    private Compte_BancaireOutputMapper compteBancaireOutputMapper;
+    @Autowired
+    private TransfertOutputMapper transfertOutputMapper;
+    @Autowired
+    private ContratRepository contratRepository;
+    @Autowired
+    private DemandeRepoisitory demandeRepoisitory;
+    @Autowired
+    private contrat_preteOutputMapper contratPreteOutputMapper;
+    @Autowired
+    private DemandeOutputMapper demandeOutputMapper;
+    @Autowired
+    private ReclamationOutputMapper reclamationOutputMapper;
+    @Autowired
+    private IreclamationRepo reclamationRepository;
+
 
     @Override
     public List<ClientOutputDto> getAllClients() {
@@ -130,5 +166,59 @@ public class ClientService implements IClientService {
             return null;
         }
     }
+
+
+
+    public List<Object> getAllHistorique(long id){
+        List<Transaction> transactions= this.transactionRepository.findByIdClient(id).get();
+        List<TransactionOutputDto> transactionOutputDtos=transactions.stream().map(transactionOutputMapper::toDto).collect(Collectors.toList());
+        List<Transfert> transferts = this.transfertRepository.findByIdClient(id).get();
+        List<TransfertOutputDto> transfertOutputDtos=transferts.stream().map(transfertOutputMapper::toDto).collect(Collectors.toList());
+
+        List<Object> objects= new ArrayList<>();
+        objects.add(transactionOutputDtos);
+        objects.add(transfertOutputDtos);
+        return objects;
+
+    }
+    public List<Compte_BancaireOutputDto> getCompteById(long id){
+        List<Compte_Bancaire> comptes = this.compte_bancaireRepository.findByIdClient(id).get();
+
+        List<Compte_BancaireOutputDto> compteBancaireOutputDtos=comptes.stream().map(compteBancaireOutputMapper::toDto).collect(Collectors.toList());
+
+        return compteBancaireOutputDtos;
+
+    }
+    public List<Object> getNotifications(long id){
+        List<contrat_prete> contrat_pretes= this.contratRepository.findByIdClient(id).get();
+        List<contrat_preteOutputDto> contratPreteOutputDtos=contrat_pretes.stream().map(contratPreteOutputMapper::toDto).collect(Collectors.toList());
+        List<Demande> demandes= this.demandeRepoisitory.findByIdClient(id).get();
+        List<DemandeOutputDto> demandeOutputDtos=demandes.stream().map(demandeOutputMapper::toDto).collect(Collectors.toList());
+
+
+        List<Reclamation> reclamations= this.reclamationRepository.findByIdClient(id).get();
+        List<ReclamationOutputDto> reclamationOutputDtos=reclamations.stream().map(reclamationOutputMapper::toDto).collect(Collectors.toList());
+        demandeOutputDtos.forEach(demandeOutputDto -> {
+            demandeOutputDto.setTypeObj("DEMANDE");
+        });
+        contratPreteOutputDtos.forEach(contrat_preteOutputDto -> {
+            contrat_preteOutputDto.settype("CONTRAT");
+        });
+        reclamationOutputDtos.forEach(reclamationOutputDto -> {
+            reclamationOutputDto.setType("RECLAMATION");
+        });
+        List<Object> objects= new ArrayList<>();
+        objects.add(demandeOutputDtos);
+        objects.add(contratPreteOutputDtos);
+        objects.add(reclamationOutputDtos);
+        //contrat prete
+        //Demande
+        //reclamation
+
+        return objects;
+
+    }
+
+
 }
 
