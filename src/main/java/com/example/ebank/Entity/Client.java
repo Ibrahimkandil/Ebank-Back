@@ -44,7 +44,7 @@ public class Client implements Serializable {
     private genre Sexe;
     @Column(name="date_d'ajout")
     private ZonedDateTime Date_d_ajout;
-    @Column(name = "image_data")
+    @Column(name = "image_data",length = 1048576)
     private byte[] image_data;
     @Column(name="etatCivil")
     @Enumerated(EnumType.STRING)

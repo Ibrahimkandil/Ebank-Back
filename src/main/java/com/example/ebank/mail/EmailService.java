@@ -56,10 +56,31 @@ public class EmailService {
 
             mailSender.send(message);
         }
+    public void sendEmailtoClient(String to, String subject, String username,String identification,String password) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        String emailContent = loadEmailTemplateCreatedAccount()
+                .replace("{{username}}", username)
+                .replace("{{identification}}", identification)
+                .replace("{{password}}", password);
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(emailContent, true);
+
+        mailSender.send(message);
+    }
 
 
     private String loadEmailTemplate() throws IOException {
         Resource resource = resourceLoader.getResource("classpath:email-template.html");
+        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            return FileCopyUtils.copyToString(reader);
+        }
+    }
+    private String loadEmailTemplateCreatedAccount() throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:Clientemail-template.html");
         try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
             return FileCopyUtils.copyToString(reader);
         }

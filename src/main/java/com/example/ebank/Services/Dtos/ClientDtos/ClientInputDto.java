@@ -26,40 +26,80 @@ public class ClientInputDto implements Serializable {
     private String  etatCivil;
     private String  statutEmploi;
 
+    public String getLast_name() {
+        return last_name;
+    }
+
     public void setLast_name(String last_name) {
         this.last_name = last_name;
+    }
+
+    public String getFirst_name() {
+        return first_name;
     }
 
     public void setFirst_name(String first_name) {
         this.first_name = first_name;
     }
 
+    public String getAddress() {
+        return Address;
+    }
+
     public void setAddress(String address) {
         Address = address;
+    }
+
+    public String getPhone() {
+        return Phone;
     }
 
     public void setPhone(String phone) {
         Phone = phone;
     }
 
+    public String getEmail() {
+        return Email;
+    }
+
     public void setEmail(String email) {
         Email = email;
+    }
+
+    public String getDate_of_birth() {
+        return Date_of_birth;
     }
 
     public void setDate_of_birth(String date_of_birth) {
         Date_of_birth = date_of_birth;
     }
 
+    public String getSexe() {
+        return Sexe;
+    }
+
     public void setSexe(String sexe) {
         Sexe = sexe;
+    }
+
+    public byte[] getImage_data() {
+        return image_data;
     }
 
     public void setImage_data(byte[] image_data) {
         this.image_data = image_data;
     }
 
+    public String getEtatCivil() {
+        return etatCivil;
+    }
+
     public void setEtatCivil(String etatCivil) {
         this.etatCivil = etatCivil;
+    }
+
+    public String getStatutEmploi() {
+        return statutEmploi;
     }
 
     public void setStatutEmploi(String statutEmploi) {
@@ -76,8 +116,9 @@ public class ClientInputDto implements Serializable {
 
     @Override
     public int hashCode() {
-        return   Objects.hash(last_name, first_name, Address, Phone, Email, Date_of_birth, Sexe, etatCivil, statutEmploi);
-
+        int result = Objects.hash(last_name, first_name, Address, Phone, Email, Date_of_birth, Sexe, etatCivil, statutEmploi);
+        result = 31 * result + Arrays.hashCode(image_data);
+        return result;
     }
 
     @Override
@@ -90,6 +131,7 @@ public class ClientInputDto implements Serializable {
                 ", Email='" + Email + '\'' +
                 ", Date_of_birth='" + Date_of_birth + '\'' +
                 ", Sexe='" + Sexe + '\'' +
+                ", image_data=" + Arrays.toString(image_data) +
                 ", etatCivil='" + etatCivil + '\'' +
                 ", statutEmploi='" + statutEmploi + '\'' +
                 '}';

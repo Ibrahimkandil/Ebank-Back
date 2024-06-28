@@ -28,14 +28,14 @@ public class JWTServiceImpl implements JWTService {
     public String generateTokenemployee(Employee employee){
         return Jwts.builder().setSubject(employee.getName()+" "+employee.getLast_name()+":"+employee.getIdentificationNumber())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 6))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 3))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
     public String generateTokenadmin(Admin admin){
         return Jwts.builder().setSubject(admin.getName()+" "+admin.getLast_name()+":"+admin.getIdentificationNumber())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 3))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
