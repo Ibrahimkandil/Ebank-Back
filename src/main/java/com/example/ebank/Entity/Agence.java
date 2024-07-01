@@ -39,7 +39,7 @@ public class Agence implements Serializable {
     private boolean state;
     @Column(name = "Date_Creation")
     private String creationDate;
-    @OneToMany(mappedBy = "agence")
+      @OneToMany(mappedBy = "agence")
     private List<Employee> employees;
     @OneToOne
     @JoinColumn(name = "Responsable")

@@ -1,53 +1,78 @@
 package com.example.ebank.Services.Mappers.EmployeeMappers;
 
 import com.example.ebank.Entity.Client;
+import com.example.ebank.Entity.Employee;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
+import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeDto;
+import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeInputDto;
 import com.example.ebank.Services.Mappers.EntityMapper;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {})
 
 
-public abstract class EmployeeInputMapper implements EntityMapper<ClientInputDto, Client> {
+public abstract class EmployeeInputMapper implements EntityMapper<EmployeeInputDto, Employee> {
 
-    public abstract Client toEntity(ClientInputDto dto) ;
+    public abstract Employee toEntity(EmployeeInputDto dto) ;
 
 
-    public abstract ClientInputDto toDto(Client entity) ;
+    public abstract EmployeeInputDto toDto(Employee entity) ;
 
-    public Client partialUpdate(Client entity,Client c1) {
-        if (c1.getLast_name() != null) {
-            entity.setLast_name(c1.getLast_name());
+    public void partialUpdate(Employee entity, EmployeeDto employeeDto) {
+        if (employeeDto.getName() != null) {
+            entity.setName(employeeDto.getName());
         }
-        if (c1.getFirst_name() != null) {
-            entity.setFirst_name(c1.getFirst_name());
+
+        if (employeeDto.getMail() != null) {
+            entity.setMail(employeeDto.getMail());
         }
-        if (c1.getAddress() != null) {
-            entity.setAddress(c1.getAddress());
+
+        if (employeeDto.getSalaire() != 0) {
+            entity.setSalaire(employeeDto.getSalaire());
         }
-        if (c1.getPhone() != null) {
-            entity.setPhone(c1.getPhone());
+
+        if (employeeDto.getAddress() != null) {
+            entity.setAddress(employeeDto.getAddress());
         }
-        if (c1.getEmail() != null) {
-            entity.setEmail(c1.getEmail());
+
+        if (employeeDto.getCin() != null) {
+            entity.setCin(employeeDto.getCin());
         }
-        if (c1.getDate_of_birth() != null) {
-            entity.setDate_of_birth(c1.getDate_of_birth());
+
+        if (employeeDto.getDate_ajout() != null) {
+            entity.setDate_ajout(employeeDto.getDate_ajout());
         }
-        if (c1.getSexe() != null) {
-            entity.setSexe(c1.getSexe());
+
+        if (employeeDto.getPassword() != null) {
+            entity.setPassword(employeeDto.getPassword());
         }
-        if (c1.getImage_data() != null) {
-            entity.setImage_data(c1.getImage_data());
+
+        if (employeeDto.getAdded_by() != null) {
+            entity.setAdded_by(employeeDto.getAdded_by());
         }
-        if (c1.getEtatCivil() != null) {
-            entity.setEtatCivil(c1.getEtatCivil());
+
+        if (employeeDto.getLast_name() != null) {
+            entity.setLast_name(employeeDto.getLast_name());
         }
-        if (c1.getStatutEmploi() != null) {
-            entity.setStatutEmploi(c1.getStatutEmploi());
+
+        if (employeeDto.getIdentification_number() != null) {
+            entity.setIdentificationNumber(employeeDto.getIdentification_number());
         }
-        return entity;
+
+        if (employeeDto.getImage_data() != null) {
+            entity.setImage_data(employeeDto.getImage_data());
+        }
+
+        if (employeeDto.getAgence() != null) {
+            entity.setAgence(employeeDto.getAgence());
+        }
+
+        if (employeeDto.getSexe() != null) {
+            entity.setSexe(employeeDto.getSexe());
+        }
+
     }
+
 
 
 

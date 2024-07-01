@@ -102,9 +102,34 @@ public class EmailService {
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
             return new String(decryptedBytes);
         } catch (Exception e) {
-            System.out.println("Error while decrypting: " + e.toString());
             return null;
         }
     }
+
+
+    private String loadEmailTemplateContact() throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:contactEmail.html");
+        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            return FileCopyUtils.copyToString(reader);
+        }
     }
+
+    public void sendEmailContact(String to, String sujet, String text,String username) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        String emailContent = loadEmailTemplateContact()
+                .replace("{{username}}", username)
+                .replace("{{sujet}}", sujet)
+                .replace("{{text}}", text);
+
+        helper.setTo(to);
+        helper.setSubject(sujet);
+        helper.setText(emailContent, true);
+
+        mailSender.send(message);
+    }
+
+
+}
 

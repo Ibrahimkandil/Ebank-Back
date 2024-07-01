@@ -43,7 +43,7 @@ public class Employee implements Serializable {
     private String last_name;
     @Column(name = "UserCode")
     private String IdentificationNumber;
-    @Column(name = "image_data")
+    @Column(name = "image_data",length = 1048576)
     private byte[] image_data;
     @ManyToOne
     private Agence agence;
