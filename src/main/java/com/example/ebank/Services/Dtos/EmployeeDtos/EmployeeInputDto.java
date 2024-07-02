@@ -17,7 +17,6 @@ import java.util.Objects;
 
 public class EmployeeInputDto implements Serializable {
 
-    private Long id;
 
     private String name;
     private String mail;
@@ -31,13 +30,7 @@ public class EmployeeInputDto implements Serializable {
     private Agence agence;
     private genre Sexe;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -132,12 +125,12 @@ public class EmployeeInputDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeeInputDto that = (EmployeeInputDto) o;
-        return Double.compare(salaire, that.salaire) == 0 && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(mail, that.mail) && Objects.equals(address, that.address) && Objects.equals(cin, that.cin) && Objects.equals(Date_ajout, that.Date_ajout) && Objects.equals(added_by, that.added_by) && Objects.equals(last_name, that.last_name) && Arrays.equals(image_data, that.image_data) && Objects.equals(agence, that.agence) && Sexe == that.Sexe;
+        return Double.compare(salaire, that.salaire) == 0 &&  Objects.equals(name, that.name) && Objects.equals(mail, that.mail) && Objects.equals(address, that.address) && Objects.equals(cin, that.cin) && Objects.equals(Date_ajout, that.Date_ajout) && Objects.equals(added_by, that.added_by) && Objects.equals(last_name, that.last_name) && Arrays.equals(image_data, that.image_data) && Objects.equals(agence, that.agence) && Sexe == that.Sexe;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, mail, salaire, address, cin, Date_ajout, added_by, last_name, agence, Sexe);
+        int result = Objects.hash(name, mail, salaire, address, cin, Date_ajout, added_by, last_name, agence, Sexe);
         result = 31 * result + Arrays.hashCode(image_data);
         return result;
     }
@@ -145,7 +138,6 @@ public class EmployeeInputDto implements Serializable {
     @Override
     public String toString() {
         return "EmployeeInputDto{" +
-                "id=" + id +
                 ", name='" + name + '\'' +
                 ", mail='" + mail + '\'' +
                 ", salaire=" + salaire +

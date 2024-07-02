@@ -1,16 +1,20 @@
 package com.example.ebank.Controllers;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Employee;
-import com.example.ebank.Entity.genre;
-import com.example.ebank.Repository.IClientRepo;
-import com.example.ebank.Repository.IEmployeeRepo;
+import com.example.ebank.Entity.*;
+import com.example.ebank.Repository.*;
 import com.example.ebank.Services.ClientService;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
+import com.example.ebank.Services.Dtos.DemandeDtos.DemandeOutputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeOutputDto;
+import com.example.ebank.Services.Dtos.ReclamationDtos.ReclamationOutputDto;
+import com.example.ebank.Services.Dtos.TransactionDtos.TransactionOutputDto;
+import com.example.ebank.Services.Dtos.TransfertDtos.TransfertOutputDto;
 import com.example.ebank.Services.EmployeeService;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
+import com.example.ebank.Services.Mappers.DemandeMappers.DemandeOutputMapper;
+import com.example.ebank.Services.Mappers.ReclamationMappers.ReclamationOutputMapper;
+import com.example.ebank.Services.Mappers.TransactionMappers.TransactionOutputMapper;
 import com.example.ebank.mail.EmailResponse;
 import com.example.ebank.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/employee")
@@ -37,7 +43,22 @@ public class EmployeeControllers {
     private IClientRepo iclientRepo;
     @Autowired
     private EmailService emailService;
-
+    @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
+    private TransactionOutputMapper transactionOutputMapper;
+    @Autowired
+    private DemandeRepoisitory demandeRepoisitory;
+    @Autowired
+    private DemandeOutputMapper demandeOutputMapper;
+    @Autowired
+    private IreclamationRepo reclamationRepository;
+    @Autowired
+    private ReclamationOutputMapper reclamationOutputMapper;
+    @Autowired
+    private TransfertRepository transfertRepository;
+    @Autowired
+    private IControlleRepo iControlleRepo;
     @GetMapping
     public  String SayHello(){
         return "Hello it's Employee";
@@ -59,7 +80,7 @@ public class EmployeeControllers {
     @PostMapping("addClient/{id}")
     public ResponseEntity<Object> addClient(@PathVariable Long id, @RequestBody ClientInputDto client) {
         Employee employee = iEmployeeRepo.findById(id).get();
-        System.out.println(client);
+
         Client client1=clientInputMapper.toEntity(client);
         client1.setAddedBy(employee);
         client1.setIdentificationNumber(client1.Genrateur_Identification());
@@ -71,7 +92,13 @@ public class EmployeeControllers {
         client1.setEmail(client.getEmail());
         client1.setDate_of_birth(client.getDate_of_birth());
         client1.setSexe(genre.Homme);
-        System.out.println(client1);
+
+        client1=iclientRepo.save(client1);
+        Controlle controlle=new Controlle();
+        controlle.setId_User(client1.getId());
+        controlle.setType("CLIENT");
+        controlle.setEtatCompte(EtatCompte.VERIFICATION);
+        iControlleRepo.save(controlle);
         EmailResponse emailResponse = new EmailResponse();
 
         try {
@@ -83,5 +110,143 @@ public class EmployeeControllers {
         }
         //       iclientRepo.save(client1);
         return ResponseEntity.status(HttpStatus.CREATED).body(client1);
+    }
+
+
+
+        @GetMapping("/allDatas")
+        public ResponseEntity<Object> getAllTransactions() {
+            try {
+                List<Object[]> totalAmountsByDate = transactionRepository.findTotalAmountsByCreationDate();
+                List<Object[]> totalTransferAmountsByDate = transfertRepository.findTotalAmountsAndTransfersByCreationDate();
+
+                // Map to store the aggregated result
+                Map<String, TransactionAmountsDto> formattedResult = new HashMap<>();
+
+                // Process total amounts
+                for (Object[] data : totalAmountsByDate) {
+                    ZonedDateTime creationDate = (ZonedDateTime) data[0];
+                    double totalAmount = (double) data[1];
+
+                    TransactionAmountsDto dto = new TransactionAmountsDto();
+                    dto.setTotalAmount(totalAmount);
+
+                    formattedResult.put(creationDate.toString(), dto);
+                }
+
+                // Process transfer amounts and merge into formattedResult
+                for (Object[] data : totalTransferAmountsByDate) {
+                    ZonedDateTime creationDate = (ZonedDateTime) data[0];
+                    double totalTransferAmount = (double) data[1];
+
+                    if (formattedResult.containsKey(creationDate.toString())) {
+                        TransactionAmountsDto dto = formattedResult.get(creationDate.toString());
+                        dto.setTotalTransferAmount(totalTransferAmount);
+                    } else {
+                        TransactionAmountsDto dto = new TransactionAmountsDto();
+                        dto.setTotalAmount(0); // or dto.setTotalAmount((double) data[1]); if needed
+                        dto.setTotalTransferAmount(totalTransferAmount);
+                        formattedResult.put(creationDate.toString(), dto);
+                    }
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body(formattedResult);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            }
+        }
+        @GetMapping("/notifiactions")
+    public ResponseEntity<Object> getNotificaitons(){
+            List<Demande> demandes= this.demandeRepoisitory.findAll();
+            List<DemandeOutputDto> demandeOutputDtos=demandes.stream().map(demandeOutputMapper::toDto).collect(Collectors.toList());
+
+
+            List<Reclamation> reclamations= this.reclamationRepository.findAll();
+            List<ReclamationOutputDto> reclamationOutputDtos=reclamations.stream().map(reclamationOutputMapper::toDto).collect(Collectors.toList());
+            Map<String, Object> formattedResult = new HashMap<>();
+            formattedResult.put("demandes", demandeOutputDtos);
+            formattedResult.put("reclamations", reclamationOutputDtos);
+            if(formattedResult.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }else {
+                return ResponseEntity.status(HttpStatus.OK).body(formattedResult);
+            }
+        }
+
+
+    @PostMapping("/contact")
+    public ResponseEntity<String> SendContact( @RequestBody Email_du_contact emailDuContact) {
+        String username = iclientRepo.getUserNameByEmail(emailDuContact.getTo()).get();
+
+
+        EmailResponse emailResponse = new EmailResponse();
+
+        try {
+
+            this.emailService.sendEmailContact(emailDuContact.getTo(),emailDuContact.getSujet(),emailDuContact.getText(),username);
+            return ResponseEntity.status(HttpStatus.OK).body("Email a était Envoyé vers Le Client");
+
+        } catch (Exception e) {
+            emailResponse.setResponse("Error sending email: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emailResponse.toString());
+        }
+        //       iclientRepo.save(client1);
+    }
+
+
+
+}
+ class TransactionAmountsDto {
+
+    private double totalAmount;
+    private double totalTransferAmount;
+
+     public double getTotalAmount() {
+         return totalAmount;
+     }
+
+     public void setTotalAmount(double totalAmount) {
+         this.totalAmount = totalAmount;
+     }
+
+     public double getTotalTransferAmount() {
+         return totalTransferAmount;
+     }
+
+     public void setTotalTransferAmount(double totalTransferAmount) {
+         this.totalTransferAmount = totalTransferAmount;
+     }
+     // getters and setters
+    // constructors
+    // optional: additional methods or constructors as needed
+}
+
+class Email_du_contact {
+    String to;
+    String sujet;
+    String text;
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getSujet() {
+        return sujet;
+    }
+
+    public void setSujet(String sujet) {
+        this.sujet = sujet;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

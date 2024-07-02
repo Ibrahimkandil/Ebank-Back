@@ -10,7 +10,6 @@ public class EmployeePOSTOutputDto {
     private String name;
     private String mail;
     private String last_name;
-    private Agence agence;
     public Long getId() {
         return this.id;
     }
@@ -44,25 +43,19 @@ public class EmployeePOSTOutputDto {
         this.last_name = last_name;
     }
 
-    public Agence getAgence() {
-        return agence;
-    }
 
-    public void setAgence(Agence agence) {
-        this.agence = agence;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeePOSTOutputDto that = (EmployeePOSTOutputDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(mail, that.mail) && Objects.equals(last_name, that.last_name) && Objects.equals(agence, that.agence);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(mail, that.mail) && Objects.equals(last_name, that.last_name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, mail, last_name, agence);
+        return Objects.hash(id, name, mail, last_name);
     }
 
     @Override
@@ -72,7 +65,6 @@ public class EmployeePOSTOutputDto {
                 ", name='" + name + '\'' +
                 ", mail='" + mail + '\'' +
                 ", last_name='" + last_name + '\'' +
-                ", agence=" + agence +
                 '}';
     }
 }

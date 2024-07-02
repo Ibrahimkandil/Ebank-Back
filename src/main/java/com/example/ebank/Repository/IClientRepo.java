@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -22,8 +24,11 @@ public interface IClientRepo extends JpaRepository<Client, Long> {
 
 Optional<Client> findByEmail(@Param("email") String email);
 
-
+    @Query("SELECT CONCAT(c.first_name, ' ', c.last_name) AS username FROM Client c WHERE c.Email = :email")
+    Optional<String> getUserNameByEmail(@Param("email") String email);
 //    Optional<Client> findByIdentificationNumber(String id);
+    @Query("SELECT COUNT(c), c.addedBy.id FROM Client c GROUP BY c.addedBy.id")
+    Optional<List<Object[]>> countClientsByEmployee();
 
 }
 

@@ -5,6 +5,7 @@ import  com.example.ebank.Services.Dtos.AdminsDtos.AdminPOSTOutputDto;
 import com.example.ebank.Entity.Admin;
 import com.example.ebank.Entity.Agence;
 import com.example.ebank.Entity.genre;
+import com.example.ebank.Services.Dtos.AgenceDto.AgencePostOuptDto;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class EmployeeOutputDto implements Serializable {
     private AdminPOSTOutputDto added_by;
     private String last_name;
     private byte[] image_data;
-    private Agence agence;
+    private AgencePostOuptDto agence;
     private genre Sexe;
 
     public Long getId() {
@@ -99,11 +100,11 @@ public class EmployeeOutputDto implements Serializable {
         this.image_data = image_data;
     }
 
-    public Agence getAgence() {
+    public AgencePostOuptDto getAgence() {
         return agence;
     }
 
-    public void setAgence(Agence agence) {
+    public void setAgence(AgencePostOuptDto agence) {
         this.agence = agence;
     }
 

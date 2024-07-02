@@ -12,4 +12,8 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     @Query("SELECT t FROM Transaction t WHERE t.client.id = :id")
     Optional<List<Transaction>> findByIdClient(@Param("id") long id);
+    @Query("SELECT t.Date_Expiration, SUM(t.amount) " +
+            "FROM Transaction t " +
+            "GROUP BY t.Date_Expiration")
+    List<Object[]> findTotalAmountsByCreationDate();
 }

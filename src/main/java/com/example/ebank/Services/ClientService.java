@@ -162,7 +162,6 @@ public class ClientService implements IClientService {
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
             return new String(decryptedBytes);
         } catch (Exception e) {
-            System.out.println("Error while decrypting: " + e.toString());
             return null;
         }
     }
