@@ -24,6 +24,8 @@ public class Wallet implements Serializable {
     private Client client;
     @Column(name="balance")
     private double balance;
+    @Column(name = "image_data")
+    private byte[] image_data;
 
 
 }
