@@ -12,6 +12,11 @@ import com.example.ebank.Entity.Employee;
 import com.example.ebank.Repository.IAdminRepo;
 import com.example.ebank.Repository.IClientRepo;
 import com.example.ebank.Repository.IEmployeeRepo;
+import com.example.ebank.Services.Dtos.ClientDtos.ClientPostOutputDto;
+import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeePOSTOutputDto;
+import com.example.ebank.Services.Mappers.ClientMappers.ClientPostOutMapper;
+import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeePOSTOutputMapper;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +34,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final IAdminRepo iAdminRepo;
     private final IEmployeeRepo iEmployeeRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JWTService jwtService;
+    private final JWTServiceImpl jwtService;
+    private final ClientPostOutMapper clientPostOutMapper;
+    private final EmployeePOSTOutputMapper employeePOSTOutputMapper;
 
 
 
@@ -90,21 +97,69 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             jwtAuthenticationResponse.setBody(admin);
             jwtAuthenticationResponse.setType("Admin");
             jwtAuthenticationResponse.setTime( new Date().toString());
+            jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
+             List<Map<String, String>> menus = new ArrayList<>();
+
+             // Create the first menu item
+             Map<String, String> menu1 = new HashMap<>();
+             menu1.put("index", "Home");
+             menu1.put("link", "interface3");
+             menus.add(menu1);
+
+             // Create the second menu item
+             Map<String, String> menu2 = new HashMap<>();
+             menu2.put("index", "Ajouter Employee");
+             menu2.put("link", "interface3/form");
+             menus.add(menu2);
+             jwtAuthenticationResponse.setMenus(menus);
              return jwtAuthenticationResponse;
         } else if (t.charAt(0)=='1') {
             var jwt = jwtService.generateTokenemployee(employee);
             JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
             jwtAuthenticationResponse.setToken(jwt);
-            jwtAuthenticationResponse.setBody(employee);
+             EmployeePOSTOutputDto employeePOSTOutputDto=this.employeePOSTOutputMapper.toDto(employee);
+             jwtAuthenticationResponse.setBody(employeePOSTOutputDto);
             jwtAuthenticationResponse.setType("Employee");
-            jwtAuthenticationResponse.setTime( new Date().toString());
+             jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
+
+             jwtAuthenticationResponse.setTime( new Date().toString());
+             List<Map<String, String>> menus = new ArrayList<>();
+
+             // Create the first menu item
+             Map<String, String> menu1 = new HashMap<>();
+             menu1.put("index", "Home");
+             menu1.put("link", "interface2");
+             menus.add(menu1);
+
+             // Create the second menu item
+             Map<String, String> menu2 = new HashMap<>();
+             menu2.put("index", "Ajouter Client");
+             menu2.put("link", "interface2/form");
+             menus.add(menu2);
+             jwtAuthenticationResponse.setMenus(menus);
             return jwtAuthenticationResponse;
         }else{
             var jwt = jwtService.generateTokenclient(client);
             JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
             jwtAuthenticationResponse.setToken(jwt);
-            jwtAuthenticationResponse.setBody(client);
+             ClientPostOutputDto clientPostOutputDto=this.clientPostOutMapper.toDto(client);
+            jwtAuthenticationResponse.setBody(clientPostOutputDto);
             jwtAuthenticationResponse.setType("Client");
+             List<Map<String, String>> menus = new ArrayList<>();
+
+             // Create the first menu item
+             Map<String, String> menu1 = new HashMap<>();
+             menu1.put("index", "Home");
+             menu1.put("link", "interface1");
+             menus.add(menu1);
+
+             // Create the second menu item
+             Map<String, String> menu2 = new HashMap<>();
+             menu2.put("index", "formulaire");
+             menu2.put("link", "wallet");
+             menus.add(menu2);
+             jwtAuthenticationResponse.setMenus(menus);
+            jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
             jwtAuthenticationResponse.setTime( new Date().toString());
             return jwtAuthenticationResponse;
         }

@@ -1,6 +1,7 @@
 package com.example.ebank.Services.Dtos.TransfertDtos;
 
 import com.example.ebank.Entity.Client;
+import com.example.ebank.Services.Dtos.ClientDtos.ClientPostOutputDto;
 import com.example.ebank.Services.Dtos.Comptes_BancaireDtos.Compte_BancairePostOutDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
@@ -14,8 +15,8 @@ public class TransfertOutputDto {
     private Long id;
     private double amount;
     private ZonedDateTime Date;
-    private Client idCompteSource;
-    private Client idCompteDestinations;
+        private ClientPostOutputDto idCompteSource;
+    private ClientPostOutputDto idCompteDestinations;
     private Compte_BancairePostOutDto compte_Bancaire;
 
     public Compte_BancairePostOutDto getCompte_Bancaire() {
@@ -50,19 +51,19 @@ public class TransfertOutputDto {
         Date = date;
     }
 
-    public Client getIdCompteSource() {
+    public ClientPostOutputDto getIdCompteSource() {
         return idCompteSource;
     }
 
-    public void setIdCompteSource(Client idCompteSource) {
+    public void setIdCompteSource(ClientPostOutputDto idCompteSource) {
         this.idCompteSource = idCompteSource;
     }
 
-    public Client getIdCompteDestinations() {
+    public ClientPostOutputDto getIdCompteDestinations() {
         return idCompteDestinations;
     }
 
-    public void setIdCompteDestinations(Client idCompteDestinations) {
+    public void setIdCompteDestinations(ClientPostOutputDto idCompteDestinations) {
         this.idCompteDestinations = idCompteDestinations;
     }
 
