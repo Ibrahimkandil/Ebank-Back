@@ -8,9 +8,11 @@ import com.example.ebank.Services.Dtos.AgenceDto.AgenceOutputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeOutputDto;
+import com.example.ebank.Services.Dtos.contrat_preteDtos.contrat_preteOutputDto;
 import com.example.ebank.Services.Mappers.AgenceMappers.AgenceOutputMapper;
 import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeInputMapper;
 import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeOutputMapper;
+import com.example.ebank.Services.Mappers.contrat_preteMappers.contrat_preteOutputMapper;
 import com.example.ebank.mail.EmailResponse;
 import com.example.ebank.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,10 @@ public class AdminController {
     private IControlleRepo iControlleRepo;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private ContratRepository contratRepository;
+    @Autowired
+    private contrat_preteOutputMapper contratPreteOutputMapper;
 
     @GetMapping
     public  String SayHello(){
@@ -153,6 +159,19 @@ public class AdminController {
         }
         //       iclientRepo.save(client1);
         return ResponseEntity.status(HttpStatus.CREATED).body(employee);
+    }
+
+    @GetMapping("/getContrats")
+    public ResponseEntity<Object> getContrats() {
+        try {
+            List<contrat_prete> contrats = contratRepository.findAll();
+            List<contrat_preteOutputDto> contratPreteOutputDtos = contrats.stream()
+                    .map(contratPreteOutputMapper::toDto)// Map each Client entity to ClientOutputDto using the mapper
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.OK).body(contratPreteOutputDtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Lors du Fetching Contrats");
+        }
     }
 
 

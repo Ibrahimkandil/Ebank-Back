@@ -2,6 +2,8 @@ package com.example.ebank.Dto;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Data
 public class JwtAuthenticationResponse {
@@ -9,4 +11,6 @@ public class JwtAuthenticationResponse {
     private Object Body;
     private String type;
     private String time;
+    private String time_Expiration;
+    private List<Map<String, String>> Menus;
 }

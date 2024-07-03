@@ -28,8 +28,13 @@ public class AuthenticationController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest){
-        return ResponseEntity.ok(authenticationService.signin(signinRequest));
+    public ResponseEntity<Object> signin(@RequestBody SigninRequest signinRequest) throws Exception {
+        try {
+            return ResponseEntity.ok(authenticationService.signin(signinRequest));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+        }
     }
     @PostMapping("/signup/client")
 
