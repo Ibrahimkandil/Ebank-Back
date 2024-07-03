@@ -14,4 +14,6 @@ import java.util.Optional;
 public interface IwalletRepo extends JpaRepository<Wallet,Long> {
     @Query("SELECT w FROM Wallet w WHERE w.client.id = :id ")
     Optional<List<Wallet>> findByClientId(@Param("id") Long id);
+    @Query("SELECT w FROM Wallet w WHERE w.client.id = :id and  w.currency = :currency")
+    Optional<Wallet> findByClientIdAndCurrency(@Param("id") Long id,@Param("currency") String currency);
 }

@@ -1,8 +1,11 @@
 package com.example.ebank.Controllers;
 
 import com.example.ebank.Entity.Client;
+import com.example.ebank.Entity.Compte_Bancaire;
 import com.example.ebank.Entity.Wallet;
+import com.example.ebank.Repository.Compte_BancaireRepository;
 import com.example.ebank.Repository.IClientRepo;
+import com.example.ebank.Repository.IwalletRepo;
 import com.example.ebank.Services.Dtos.WalletDtos.WalletInputDto;
 import com.example.ebank.Services.Dtos.WalletDtos.WalletOutputDto;
 import com.example.ebank.Services.Mappers.WalletMappers.WalletInputMapper;
@@ -31,6 +34,10 @@ public class WalletController {
     private IClientRepo iclientRepo;
     @Autowired
     private WalletOutputMapper walletOutputMapper;
+    @Autowired
+    private IwalletRepo iwalletRepo;
+    @Autowired
+    private Compte_BancaireRepository compteBancaireRepository;
     // Créez une instance de RestTemplate directement dans le contrôleur
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -53,12 +60,16 @@ public class WalletController {
         return wallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping
-    public ResponseEntity<Object> createWallet(@RequestBody WalletInputDto wallet) throws Exception {
+    @PostMapping("/{id_compte}")
+    public ResponseEntity<Object> createWallet(@PathVariable Long id_compte ,@RequestBody WalletInputDto wallet) throws Exception {
         try {
+            Compte_Bancaire compteBancaire=compteBancaireRepository.findById(id_compte).get();
         Client client = this.iclientRepo.findById(wallet.getId_client()).get();
         Wallet Wallet = this.walletInputMapper.toEntity(wallet);
-        Wallet.setClient(client);
+            compteBancaire.setBalance(compteBancaire.getBalance()-Wallet.getBalance());
+            compteBancaireRepository.saveAndFlush(compteBancaire);
+
+            Wallet.setClient(client);
         Wallet createdWallet = walletService.createWallet(Wallet);
         WalletOutputDto outputWallet = this.walletOutputMapper.toDto(createdWallet);
         return ResponseEntity.status(HttpStatus.CREATED).body(outputWallet);
@@ -105,5 +116,36 @@ public class WalletController {
         }
         double rate = rates.get(to);
         return amount * rate;
+    }
+    @PostMapping("/Bycurrency")
+    public ResponseEntity<Object> getWalletByClientIdAndCurrency(@RequestBody currencyName currencyName) throws Exception {
+        try{
+        Wallet wallet = iwalletRepo.findByClientIdAndCurrency(currencyName.getId_client(), currencyName.getCurrency()).get();
+        WalletOutputDto  outputWallet=this.walletOutputMapper.toDto(wallet);
+        return ResponseEntity.status(HttpStatus.OK).body(outputWallet);
+    }catch( Exception e ) {
+        return ResponseEntity.status(HttpStatus.OK).body("CREATE");
+
+    }
+    }
+}
+class currencyName{
+    private String currency;
+    private long id_client;
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public long getId_client() {
+        return id_client;
+    }
+
+    public void setId_client(long id_client) {
+        this.id_client = id_client;
     }
 }
