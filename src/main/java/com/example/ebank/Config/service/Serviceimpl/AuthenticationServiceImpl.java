@@ -173,7 +173,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
              // Create the second menu item
              Map<String, String> menu2 = new HashMap<>();
-             menu2.put("index", "formulaire");
+             menu2.put("index", "Wallet");
              menu2.put("link", "wallet");
              menus.add(menu2);
              menus.add(menu0);
