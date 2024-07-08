@@ -18,9 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/client/wallets")
@@ -32,6 +34,8 @@ public class WalletController {
     private WalletInputMapper walletInputMapper;
     @Autowired
     private IClientRepo iclientRepo;
+    @Autowired
+    private WalletOutputMapper WalletOutputMapper;
     @Autowired
     private WalletOutputMapper walletOutputMapper;
     @Autowired
@@ -49,15 +53,52 @@ public class WalletController {
     }
 
     @GetMapping("all/{id}")
-    public List<Wallet> getWalletByClientId(@PathVariable  Long id) {
+    public List<WalletOutputDto> getWalletByClientId(@PathVariable  Long id) {
         List<Wallet> wallets = walletService.getAllWalletsByClientId(id);
-            return wallets;
+        List<WalletOutputDto> walletOutputDtos=wallets.stream().map(WalletOutputMapper::toDto).collect(Collectors.toList());
+
+        return walletOutputDtos;
     }
+    @GetMapping("allById_clientANDid_compte/{id_client}/{id_compte}")
+    public List<WalletOutputDto> getWalletByClientId(@PathVariable  Long id_client,@PathVariable  Long id_compte) {
+        List<Wallet> wallets = iwalletRepo.getAllWalletsByClientIdANDCompteId(id_client,id_compte).get();
+        List<WalletOutputDto> walletOutputDtos=wallets.stream().map(WalletOutputMapper::toDto).collect(Collectors.toList());
+
+        return walletOutputDtos;
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Wallet> getWalletById(@PathVariable  Long id) {
         Optional<Wallet> wallet = walletService.getWalletById(id);
         return wallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @PatchMapping("updateWallet")
+    public  ResponseEntity<Object> UpdateWallet(@RequestBody UpdateDataWallet updateDataWallet){
+        Wallet wallet = iwalletRepo.findById(updateDataWallet.getId_wallet()).get();
+        Compte_Bancaire compteBancaire=compteBancaireRepository.findById(wallet.getCompteBancaire().getId()).get();
+
+        if(updateDataWallet.getNew_Balance()>0){
+
+            double Indinar=(updateDataWallet.getNew_Balance()-wallet.getBalance())/updateDataWallet.getRate();
+            wallet.setBalance(updateDataWallet.getNew_Balance());
+            wallet.setDate_modification(new Date().toString());
+            iwalletRepo.saveAndFlush(wallet);
+            compteBancaire.setBalance(compteBancaire.getBalance()-Indinar);
+            compteBancaireRepository.saveAndFlush(compteBancaire);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Wallet Updated");
+        }else {
+            compteBancaire.setBalance(compteBancaire.getBalance()+wallet.getBalance()/updateDataWallet.getRate());
+            compteBancaireRepository.saveAndFlush(compteBancaire);
+            iwalletRepo.deleteById(updateDataWallet.getId_wallet());
+            return ResponseEntity.status(HttpStatus.OK).body("Wallet DELETED");
+
+
+
+
+        }
+
     }
 
     @PostMapping("/{id_compte}")
@@ -66,7 +107,10 @@ public class WalletController {
             Compte_Bancaire compteBancaire=compteBancaireRepository.findById(id_compte).get();
         Client client = this.iclientRepo.findById(wallet.getId_client()).get();
         Wallet Wallet = this.walletInputMapper.toEntity(wallet);
-            compteBancaire.setBalance(compteBancaire.getBalance()-Wallet.getBalance());
+        Wallet.setCompteBancaire(compteBancaire);
+        Wallet.setDate_modification(new Date().toString());
+        double Indinar=Wallet.getBalance()/wallet.getRate();
+            compteBancaire.setBalance(compteBancaire.getBalance()-Indinar);
             compteBancaireRepository.saveAndFlush(compteBancaire);
 
             Wallet.setClient(client);
@@ -118,20 +162,32 @@ public class WalletController {
         return amount * rate;
     }
     @PostMapping("/Bycurrency")
-    public ResponseEntity<Object> getWalletByClientIdAndCurrency(@RequestBody currencyName currencyName) throws Exception {
-        try{
-        Wallet wallet = iwalletRepo.findByClientIdAndCurrency(currencyName.getId_client(), currencyName.getCurrency()).get();
-        WalletOutputDto  outputWallet=this.walletOutputMapper.toDto(wallet);
-        return ResponseEntity.status(HttpStatus.OK).body(outputWallet);
-    }catch( Exception e ) {
-        return ResponseEntity.status(HttpStatus.OK).body("CREATE");
+    public ResponseEntity<Object> getWalletByClientIdAndCurrency(@RequestBody currencyName currencyName) {
+        Wallet wallet = iwalletRepo.findByClientIdAndCurrency(currencyName.getId_client(), currencyName.getCurrency(),currencyName.getAccount_number());
+        WalletOutputDto outputWallet = this.walletOutputMapper.toDto(wallet);
 
-    }
+        if (outputWallet != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(outputWallet);
+        } else {
+
+
+            return ResponseEntity.status(HttpStatus.OK).body("CREATE");
+        }
+
     }
 }
 class currencyName{
     private String currency;
-    private long id_client;
+    private Long id_client;
+    private String account_number;
+
+    public String getAccount_number() {
+        return account_number;
+    }
+
+    public void setAccount_number(String account_number) {
+        this.account_number = account_number;
+    }
 
     public String getCurrency() {
         return currency;
@@ -141,11 +197,41 @@ class currencyName{
         this.currency = currency;
     }
 
-    public long getId_client() {
+    public Long getId_client() {
         return id_client;
     }
 
-    public void setId_client(long id_client) {
+    public void setId_client(Long id_client) {
         this.id_client = id_client;
+    }
+}
+class UpdateDataWallet {
+    Long id_wallet;
+    double rate;
+    double new_Balance;
+
+
+    public Long getId_wallet() {
+        return id_wallet;
+    }
+
+    public void setId_wallet(Long id_wallet) {
+        this.id_wallet = id_wallet;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+
+    public double getNew_Balance() {
+        return new_Balance;
+    }
+
+    public void setNew_Balance(double new_Balance) {
+        this.new_Balance = new_Balance;
     }
 }

@@ -6,14 +6,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public interface IClientRepo extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE c.IdentificationNumber = :identification AND c.Password = :password")
-     Client findByIdentificationAndPassword(@Param("identification") String identification, @Param("password") String password);
+     Optional<Client> findByIdentificationAndPassword(@Param("identification") String identification, @Param("password") String password);
     @Query("SELECT c FROM Client c WHERE c.IdentificationNumber = :identification ")
 
      Client findByIdentificationNumber(@Param("identification") String id);

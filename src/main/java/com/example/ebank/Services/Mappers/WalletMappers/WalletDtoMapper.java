@@ -1,11 +1,8 @@
 package com.example.ebank.Services.Mappers.WalletMappers;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Reclamation;
 import com.example.ebank.Entity.Wallet;
 import com.example.ebank.Services.Dtos.WalletDtos.WalletDto;
 import com.example.ebank.Services.Mappers.EntityMapper;
-import jakarta.persistence.*;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {})
@@ -28,6 +25,10 @@ public abstract class WalletDtoMapper implements EntityMapper<WalletDto, Wallet>
         }
         if (dto.getBalance() != 0) {
             entity.setBalance(dto.getBalance());
+        }
+        if(dto.getCompteBancaire()!=null) {
+        entity.setCompteBancaire(dto.getCompteBancaire());
+
         }
 
         return entity;

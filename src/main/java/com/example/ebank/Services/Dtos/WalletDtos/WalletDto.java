@@ -1,7 +1,6 @@
 package com.example.ebank.Services.Dtos.WalletDtos;
 
-import com.example.ebank.Entity.Client;
-import jakarta.persistence.*;
+
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,10 +10,19 @@ public class WalletDto implements Serializable {
         private Long id;
         private String currency;
         private String date_modification;
+       private Long compte_Id;
 
         private Long  id_client;
         private double balance;
 
+
+    public Long getCompte_Id() {
+        return compte_Id;
+    }
+
+    public void setCompte_Id(Long compte_Id) {
+        this.compte_Id = compte_Id;
+    }
 
     public Long getId() {
         return id;
@@ -57,25 +65,27 @@ public class WalletDto implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WalletDto walletDto = (WalletDto) o;
+        return Double.compare(balance, walletDto.balance) == 0 && Objects.equals(id, walletDto.id) && Objects.equals(currency, walletDto.currency) && Objects.equals(date_modification, walletDto.date_modification) && Objects.equals(compte_Id, walletDto.compte_Id) && Objects.equals(id_client, walletDto.id_client);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, currency, date_modification, compte_Id, id_client, balance);
+    }
+
+    @Override
     public String toString() {
         return "WalletDto{" +
                 "id=" + id +
                 ", currency='" + currency + '\'' +
                 ", date_modification='" + date_modification + '\'' +
+                ", compte_Id=" + compte_Id +
                 ", id_client=" + id_client +
                 ", balance=" + balance +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WalletDto walletDto)) return false;
-        return Double.compare(getBalance(), walletDto.getBalance()) == 0 && Objects.equals(getId(), walletDto.getId()) && Objects.equals(getCurrency(), walletDto.getCurrency()) && Objects.equals(getDate_modification(), walletDto.getDate_modification()) && Objects.equals(getId_client(), walletDto.getId_client());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getCurrency(), getDate_modification(), getId_client(), getBalance());
     }
 }

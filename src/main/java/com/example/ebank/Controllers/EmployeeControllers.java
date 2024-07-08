@@ -6,13 +6,15 @@ import com.example.ebank.Services.ClientService;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
 import com.example.ebank.Services.Dtos.DemandeDtos.DemandeOutputDto;
+import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeOutputDto;
 import com.example.ebank.Services.Dtos.ReclamationDtos.ReclamationOutputDto;
-import com.example.ebank.Services.Dtos.TransactionDtos.TransactionOutputDto;
-import com.example.ebank.Services.Dtos.TransfertDtos.TransfertOutputDto;
+
 import com.example.ebank.Services.EmployeeService;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
 import com.example.ebank.Services.Mappers.DemandeMappers.DemandeOutputMapper;
+import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeInputMapper;
+import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeOutputMapper;
 import com.example.ebank.Services.Mappers.ReclamationMappers.ReclamationOutputMapper;
 import com.example.ebank.Services.Mappers.TransactionMappers.TransactionOutputMapper;
 import com.example.ebank.mail.EmailResponse;
@@ -22,8 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class EmployeeControllers {
     private EmployeeService employeeService;
     @Autowired
     private IEmployeeRepo iEmployeeRepo;
+
     @Autowired
     private ClientService clientService;
     @Autowired
@@ -59,6 +61,40 @@ public class EmployeeControllers {
     private TransfertRepository transfertRepository;
     @Autowired
     private IControlleRepo iControlleRepo;
+    @Autowired
+    private EmployeeInputMapper employeeInputMapper;
+    @Autowired
+    private EmployeeOutputMapper employeeOutputMapper;
+
+
+    @PatchMapping("Demande_Suppression/{id}")
+    public ResponseEntity<Object> Demande_Suppression(@PathVariable Long id, @RequestBody SignatureCompte signature) throws Exception  {
+        try {
+
+
+        Controlle controlle=iControlleRepo.getControlleByClientIdANDType(id,"EMPLOYEE").get();
+        controlle.setDemande_suppression(signature.getImage_data());
+        controlle.setEtatCompte(EtatCompte.DEMANDE);
+        iControlleRepo.saveAndFlush(controlle);
+        return ResponseEntity.ok().body("{\"message\": \"Demande de suppression a était accepté\"}");
+        }catch (Exception e){
+            return ResponseEntity.unprocessableEntity().body("{\"message\": \"Erreur lors de l'Enregistrement du Demande du Suppression\"}");
+
+        }
+    }
+    @PatchMapping("Update/{id}")
+    public ResponseEntity<Object> updatEmployee(@PathVariable Long id, @RequestBody EmployeeInputDto employeeInputDto) throws  Exception {
+        try {
+            Employee employee = iEmployeeRepo.findById(id).get();
+
+            employeeInputMapper.partialUpdate(employee, employeeInputDto);
+            Employee a=iEmployeeRepo.saveAndFlush(employee);
+            return ResponseEntity.ok().body(employeeOutputMapper.toDto(a));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body("{\"message\": Erreur lors de la mise à jour des données du client}");
+
+        }
+    }
     @GetMapping
     public  String SayHello(){
         return "Hello it's Employee";
@@ -192,6 +228,20 @@ public class EmployeeControllers {
         }
         //       iclientRepo.save(client1);
     }
+    @PostMapping("changerPass/{id}")
+    public ResponseEntity<Object> changerPassword(@PathVariable Long id, @RequestBody ChangerPassword changerPassword) {
+        Employee employee=iEmployeeRepo.findById(id).get();
+        if(employee.getPassword()!=changerPassword.getPassword()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Erroor Password Typed and password In DB are not the Same");
+
+        }else{
+            employee.setPassword(changerPassword.getNewPassword());
+            iEmployeeRepo.saveAndFlush(employee);
+            return ResponseEntity.status(HttpStatus.OK).body("Password Changed Successfully");
+        }
+
+    }
+
 
 
 
@@ -216,9 +266,9 @@ public class EmployeeControllers {
      public void setTotalTransferAmount(double totalTransferAmount) {
          this.totalTransferAmount = totalTransferAmount;
      }
-     // getters and setters
-    // constructors
-    // optional: additional methods or constructors as needed
+
+
+
 }
 
 class Email_du_contact {
@@ -248,5 +298,18 @@ class Email_du_contact {
 
     public void setText(String text) {
         this.text = text;
+    }
+}
+class SignatureCompte {
+
+private byte[] image_data;
+
+
+    public byte[] getImage_data() {
+        return image_data;
+    }
+
+    public void setImage_data(byte[] image_data) {
+        this.image_data = image_data;
     }
 }

@@ -2,15 +2,13 @@ package com.example.ebank.Config.service.Serviceimpl;
 
 
 import com.example.ebank.Config.service.AuthenticationService;
-import com.example.ebank.Config.service.JWTService;
 import com.example.ebank.Dto.JwtAuthenticationResponse;
 import com.example.ebank.Dto.SignUpRequest;
 import com.example.ebank.Dto.SigninRequest;
-import com.example.ebank.Entity.Admin;
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Employee;
+import com.example.ebank.Entity.*;
 import com.example.ebank.Repository.IAdminRepo;
 import com.example.ebank.Repository.IClientRepo;
+import com.example.ebank.Repository.IControlleRepo;
 import com.example.ebank.Repository.IEmployeeRepo;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientPostOutputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeePOSTOutputDto;
@@ -19,11 +17,9 @@ import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeePOSTOutputMapp
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -37,6 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JWTServiceImpl jwtService;
     private final ClientPostOutMapper clientPostOutMapper;
     private final EmployeePOSTOutputMapper employeePOSTOutputMapper;
+    private final IControlleRepo iControlleRepo;
 
 
 
@@ -70,23 +67,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    public JwtAuthenticationResponse signin(SigninRequest signinRequest) {
+    public JwtAuthenticationResponse signin(SigninRequest signinRequest)   {
         String t= signinRequest.getIdentificationnumber();
 
         Admin admin = new Admin();
         Employee employee = new Employee();
         Client client = new Client();
+        Controlle controlle = new Controlle();
+        List<Map<String, String>> menus = new ArrayList<>();
+        Map<String, String> menu0 = new HashMap<>();
+        menu0.put("index", "Paramétre");
+        menu0.put("link", "Settings");
+
 
         if(t.charAt(0)=='0'){
            admin  = iAdminRepo.findByIdentificationNumber(signinRequest.getIdentificationnumber()).orElseThrow(()->new IllegalArgumentException("Invalid email or password"));
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(Admin.getEmail(), signinRequest.getPassword()));
 
         }else if (t.charAt(0)=='1') {
-             employee = iEmployeeRepo.findByIdentificationNumber(signinRequest.getIdentificationnumber()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+             employee = iEmployeeRepo.findByIdentificationAndPassword(signinRequest.getIdentificationnumber(),signinRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+//
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(Employee.getEmail(), signinRequest.getPassword()));
+            controlle=iControlleRepo.getControlleByClientIdANDType(employee.getId(),"EMPLOYEE").get();
+            if(controlle.getEtatCompte()== EtatCompte.DEMANDE){
+                throw new IllegalArgumentException("Votre compte est en attente de validation du SUPPRESSION vous ne pouvez pas Connecter");
+            }
         }else{
-            client = iClientRepo.findByIdentificationnumber(signinRequest.getIdentificationnumber()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+            client = iClientRepo.findByIdentificationAndPassword(signinRequest.getIdentificationnumber(),signinRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(client.getEmail(), signinRequest.getPassword()));
+            controlle=iControlleRepo.getControlleByClientIdANDType(client.getId(),"CLIENT").get();
+            if(controlle.getEtatCompte()== EtatCompte.DEMANDE){
+                throw new IllegalArgumentException("Votre compte est en attente de validation du SUPPRESSION vous ne pouvez pas Connecter");
+            }
         }
 
          signinRequest.getPassword();
@@ -97,8 +109,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             jwtAuthenticationResponse.setBody(admin);
             jwtAuthenticationResponse.setType("Admin");
             jwtAuthenticationResponse.setTime( new Date().toString());
-            jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
-             List<Map<String, String>> menus = new ArrayList<>();
+             jwtAuthenticationResponse.setEtat("ACITF");
+             jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
+
 
              // Create the first menu item
              Map<String, String> menu1 = new HashMap<>();
@@ -111,6 +124,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
              menu2.put("index", "Ajouter Employee");
              menu2.put("link", "interface3/form");
              menus.add(menu2);
+             menus.add(menu0);
              jwtAuthenticationResponse.setMenus(menus);
              return jwtAuthenticationResponse;
         } else if (t.charAt(0)=='1') {
@@ -120,10 +134,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
              EmployeePOSTOutputDto employeePOSTOutputDto=this.employeePOSTOutputMapper.toDto(employee);
              jwtAuthenticationResponse.setBody(employeePOSTOutputDto);
             jwtAuthenticationResponse.setType("Employee");
+             jwtAuthenticationResponse.setEtat(controlle.getEtatCompte().toString());
+
              jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
 
              jwtAuthenticationResponse.setTime( new Date().toString());
-             List<Map<String, String>> menus = new ArrayList<>();
 
              // Create the first menu item
              Map<String, String> menu1 = new HashMap<>();
@@ -136,6 +151,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
              menu2.put("index", "Ajouter Client");
              menu2.put("link", "interface2/form");
              menus.add(menu2);
+             menus.add(menu0);
              jwtAuthenticationResponse.setMenus(menus);
             return jwtAuthenticationResponse;
         }else{
@@ -145,7 +161,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
              ClientPostOutputDto clientPostOutputDto=this.clientPostOutMapper.toDto(client);
             jwtAuthenticationResponse.setBody(clientPostOutputDto);
             jwtAuthenticationResponse.setType("Client");
-             List<Map<String, String>> menus = new ArrayList<>();
+
+             jwtAuthenticationResponse.setEtat(controlle.getEtatCompte().toString());
+
 
              // Create the first menu item
              Map<String, String> menu1 = new HashMap<>();
@@ -155,9 +173,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
              // Create the second menu item
              Map<String, String> menu2 = new HashMap<>();
-             menu2.put("index", "formulaire");
+             menu2.put("index", "Wallet");
              menu2.put("link", "wallet");
              menus.add(menu2);
+             menus.add(menu0);
              jwtAuthenticationResponse.setMenus(menus);
             jwtAuthenticationResponse.setTime_Expiration(this.jwtService.extractClaim(jwt, Claims::getExpiration).toString());
             jwtAuthenticationResponse.setTime( new Date().toString());
