@@ -3,12 +3,15 @@ package com.example.ebank.Controllers;
 import com.example.ebank.Entity.*;
 import com.example.ebank.Repository.*;
 import com.example.ebank.Services.AdminService;
+import com.example.ebank.Services.Dtos.AdminsDtos.AdminInputDto;
 import com.example.ebank.Services.Dtos.AdminsDtos.AdminOutputDto;
 import com.example.ebank.Services.Dtos.AgenceDto.AgenceOutputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeOutputDto;
 import com.example.ebank.Services.Dtos.contrat_preteDtos.contrat_preteOutputDto;
+import com.example.ebank.Services.Mappers.AdminMappers.AdminInputMapper;
+import com.example.ebank.Services.Mappers.AdminMappers.AdminOutputMapper;
 import com.example.ebank.Services.Mappers.AgenceMappers.AgenceOutputMapper;
 import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeInputMapper;
 import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeOutputMapper;
@@ -57,20 +60,36 @@ public class AdminController {
     private ContratRepository contratRepository;
     @Autowired
     private contrat_preteOutputMapper contratPreteOutputMapper;
+    @Autowired
+    private AdminInputMapper adminInputMapper;
+    @Autowired
+    private AdminOutputMapper adminOutputMapper;
 
     @GetMapping
     public  String SayHello(){
         return "Hello it's Admin";
     }
 
+    @PatchMapping("Update/{id}")
+    public ResponseEntity<Object> updatAdmin(@PathVariable Long id, @RequestBody AdminInputDto adminInputDto) throws  Exception {
+        try {
+            Admin admin = iAdminRepo.findById(id).get();
 
+            adminInputMapper.partialUpdate(admin, adminInputDto);
+            Admin a=iAdminRepo.saveAndFlush(admin);
+            return ResponseEntity.ok().body(adminOutputMapper.toDto(a));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body("{\"message\": Erreur lors de la mise à jour des données du client}");
+
+        }
+    }
     @GetMapping("/all")
     public List<AdminOutputDto> getAllAdmins() {
         return this.adminService.getAllAdmins();
     }
 
     @GetMapping("/{id}")
-    public AdminOutputDto getClientById(@PathVariable Long id){
+    public AdminOutputDto getAdminById(@PathVariable Long id){
         return adminService.getAdminById(id);
     }
     @GetMapping("employee/all")
@@ -175,5 +194,19 @@ public class AdminController {
     }
 
 
+    @PostMapping("changerPass/{id}")
+    public ResponseEntity<Object> changerPassword(@PathVariable Long id, @RequestBody ChangerPassword changerPassword) {
+        Admin admin=iAdminRepo.findById(id).get();
+        if(admin.getPassword()!=changerPassword.getPassword()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Erroor Password Typed and password In DB are not the Same");
 
+        }else{
+            admin.setPassword(changerPassword.getNewPassword());
+            iAdminRepo.saveAndFlush(admin);
+            return ResponseEntity.status(HttpStatus.OK).body("Password Changed Successfully");
+        }
+
+    }
 }
+
+

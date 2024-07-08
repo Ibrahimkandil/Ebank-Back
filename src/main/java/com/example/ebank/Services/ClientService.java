@@ -87,7 +87,7 @@ public class ClientService implements IClientService {
 
     @Override
     public ClientOutputDto getClient(String identification, String password) {
-        Client c =  this.iclientRepo.findByIdentificationAndPassword(identification, password);
+        Client c =  this.iclientRepo.findByIdentificationAndPassword(identification, password).get();
         return  clientOutputMapper.toDto(c);
     }
 

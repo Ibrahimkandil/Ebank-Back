@@ -13,4 +13,5 @@ public class JwtAuthenticationResponse {
     private String time;
     private String time_Expiration;
     private List<Map<String, String>> Menus;
+    private String Etat;
 }

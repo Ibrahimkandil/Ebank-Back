@@ -16,7 +16,6 @@ public class ClientInputDto implements Serializable {
 
     private String last_name;
     private String first_name;
-
     private String Address;
     private String Phone;
     private String Email;

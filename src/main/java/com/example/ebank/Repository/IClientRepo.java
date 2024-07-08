@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface IClientRepo extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE c.IdentificationNumber = :identification AND c.Password = :password")
-     Client findByIdentificationAndPassword(@Param("identification") String identification, @Param("password") String password);
+     Optional<Client> findByIdentificationAndPassword(@Param("identification") String identification, @Param("password") String password);
     @Query("SELECT c FROM Client c WHERE c.IdentificationNumber = :identification ")
 
      Client findByIdentificationNumber(@Param("identification") String id);

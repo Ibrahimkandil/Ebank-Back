@@ -8,9 +8,18 @@ public class WalletInputDto implements Serializable {
     private String date_modification;
 
     private Long  id_client;
+    private Long compte_Id;
     private double balance;
+    private double rate;
 
 
+    public Long getCompte_Id() {
+        return compte_Id;
+    }
+
+    public void setCompte_Id(Long compte_Id) {
+        this.compte_Id = compte_Id;
+    }
 
     public String getCurrency() {
         return currency;
@@ -44,25 +53,36 @@ public class WalletInputDto implements Serializable {
         this.balance = balance;
     }
 
-    @Override
-    public String toString() {
-        return "WalletInputDto{" +
-                ", currency='" + currency + '\'' +
-                ", date_modification='" + date_modification + '\'' +
-                ", id_client=" + id_client +
-                ", balance=" + balance +
-                '}';
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WalletInputDto that)) return false;
-        return Double.compare(getBalance(), that.getBalance()) == 0 && Objects.equals(getCurrency(), that.getCurrency()) && Objects.equals(getDate_modification(), that.getDate_modification()) && Objects.equals(getId_client(), that.getId_client());
+        if (o == null || getClass() != o.getClass()) return false;
+        WalletInputDto that = (WalletInputDto) o;
+        return Double.compare(balance, that.balance) == 0 && Double.compare(rate, that.rate) == 0 && Objects.equals(currency, that.currency) && Objects.equals(date_modification, that.date_modification) && Objects.equals(id_client, that.id_client) && Objects.equals(compte_Id, that.compte_Id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( getCurrency(), getDate_modification(), getId_client(), getBalance());
+        return Objects.hash(currency, date_modification, id_client, compte_Id, balance, rate);
+    }
+
+    @Override
+    public String toString() {
+        return "WalletInputDto{" +
+                "currency='" + currency + '\'' +
+                ", date_modification='" + date_modification + '\'' +
+                ", id_client=" + id_client +
+                ", compte_Id=" + compte_Id +
+                ", balance=" + balance +
+                ", rate=" + rate +
+                '}';
     }
 }

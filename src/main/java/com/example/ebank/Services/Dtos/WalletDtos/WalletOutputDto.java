@@ -2,6 +2,7 @@ package com.example.ebank.Services.Dtos.WalletDtos;
 
 import com.example.ebank.Entity.Client;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientPostOutputDto;
+import com.example.ebank.Services.Dtos.Comptes_BancaireDtos.Compte_BancairePostOutDto;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,12 +13,20 @@ public class WalletOutputDto {
         private Long id;
         private String currency;
         private String date_modification;
+        private Compte_BancairePostOutDto compteBancaire;
 
-    private ClientPostOutputDto client;
+        private ClientPostOutputDto client;
         private double balance;
 
+    public Compte_BancairePostOutDto getCompteBancaire() {
+        return compteBancaire;
+    }
 
-        public Long getId() {
+    public void setCompteBancaire(Compte_BancairePostOutDto compteBancaire) {
+        this.compteBancaire = compteBancaire;
+    }
+
+    public Long getId() {
             return id;
         }
 
@@ -41,15 +50,15 @@ public class WalletOutputDto {
             this.date_modification = date_modification;
         }
 
-    public ClientPostOutputDto getClient() {
+        public ClientPostOutputDto getClient() {
         return client;
     }
 
-    public void setClient(ClientPostOutputDto client) {
+        public void setClient(ClientPostOutputDto client) {
         this.client = client;
     }
 
-    public double getBalance() {
+        public double getBalance() {
             return balance;
         }
 
@@ -59,15 +68,15 @@ public class WalletOutputDto {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
-        if (!(o instanceof WalletOutputDto that)) return false;
-        return Double.compare(getBalance(), that.getBalance()) == 0 && Objects.equals(getId(), that.getId()) && Objects.equals(getCurrency(), that.getCurrency()) && Objects.equals(getDate_modification(), that.getDate_modification()) && Objects.equals(getClient(), that.getClient());
+        if (o == null || getClass() != o.getClass()) return false;
+        WalletOutputDto that = (WalletOutputDto) o;
+        return Double.compare(balance, that.balance) == 0 && Objects.equals(id, that.id) && Objects.equals(currency, that.currency) && Objects.equals(date_modification, that.date_modification) && Objects.equals(compteBancaire, that.compteBancaire) && Objects.equals(client, that.client);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCurrency(), getDate_modification(), getClient(), getBalance());
+        return Objects.hash(id, currency, date_modification, compteBancaire, client, balance);
     }
 
     @Override
@@ -76,6 +85,7 @@ public class WalletOutputDto {
                 "id=" + id +
                 ", currency='" + currency + '\'' +
                 ", date_modification='" + date_modification + '\'' +
+                ", compteBancaire=" + compteBancaire +
                 ", client=" + client +
                 ", balance=" + balance +
                 '}';

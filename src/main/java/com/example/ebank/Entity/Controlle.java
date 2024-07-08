@@ -20,4 +20,10 @@ public class Controlle implements Serializable {
     private long id_User;
     @Enumerated(EnumType.STRING)
     private EtatCompte etatCompte;
+    @Column(name = "signature_Confiramation",length = 1048576)
+    private byte[] confirmation;
+    @Column(name = "signature_Suppression",length = 1048576)
+    private byte[] Demande_suppression;
+    @Column(name = "Suppression",length = 1048576)
+    private byte[] suppresion;
 }

@@ -22,6 +22,9 @@ public class Wallet implements Serializable {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+    @ManyToOne
+    @JoinColumn(name = "compte_Bancaire")
+    private Compte_Bancaire compteBancaire;
     @Column(name="balance")
     private double balance;
     @Column(name = "image_data")

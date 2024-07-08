@@ -29,6 +29,10 @@ public abstract class WalletDtoMapper implements EntityMapper<WalletDto, Wallet>
         if (dto.getBalance() != 0) {
             entity.setBalance(dto.getBalance());
         }
+        if(dto.getCompteBancaire()!=null) {
+        entity.setCompteBancaire(dto.getCompteBancaire());
+
+        }
 
         return entity;
     }
