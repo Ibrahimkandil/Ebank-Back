@@ -1,6 +1,5 @@
 package com.example.ebank.Repository;
 
-import com.example.ebank.Entity.Client;
 import com.example.ebank.Entity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

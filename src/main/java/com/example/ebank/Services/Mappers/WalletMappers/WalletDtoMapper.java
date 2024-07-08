@@ -1,11 +1,8 @@
 package com.example.ebank.Services.Mappers.WalletMappers;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Reclamation;
 import com.example.ebank.Entity.Wallet;
 import com.example.ebank.Services.Dtos.WalletDtos.WalletDto;
 import com.example.ebank.Services.Mappers.EntityMapper;
-import jakarta.persistence.*;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {})

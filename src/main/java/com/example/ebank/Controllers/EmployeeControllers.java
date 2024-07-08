@@ -3,15 +3,13 @@ package com.example.ebank.Controllers;
 import com.example.ebank.Entity.*;
 import com.example.ebank.Repository.*;
 import com.example.ebank.Services.ClientService;
-import com.example.ebank.Services.Dtos.AdminsDtos.AdminInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
 import com.example.ebank.Services.Dtos.DemandeDtos.DemandeOutputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeOutputDto;
 import com.example.ebank.Services.Dtos.ReclamationDtos.ReclamationOutputDto;
-import com.example.ebank.Services.Dtos.TransactionDtos.TransactionOutputDto;
-import com.example.ebank.Services.Dtos.TransfertDtos.TransfertOutputDto;
+
 import com.example.ebank.Services.EmployeeService;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
 import com.example.ebank.Services.Mappers.DemandeMappers.DemandeOutputMapper;
@@ -26,9 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.security.Signature;
-import java.time.LocalDate;
+
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;

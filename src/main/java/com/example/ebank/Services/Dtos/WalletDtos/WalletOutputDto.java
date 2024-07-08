@@ -1,13 +1,13 @@
 package com.example.ebank.Services.Dtos.WalletDtos;
 
-import com.example.ebank.Entity.Client;
+
 import com.example.ebank.Services.Dtos.ClientDtos.ClientPostOutputDto;
 import com.example.ebank.Services.Dtos.Comptes_BancaireDtos.Compte_BancairePostOutDto;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class WalletOutputDto {
+public class WalletOutputDto implements Serializable {
 
 
         private Long id;

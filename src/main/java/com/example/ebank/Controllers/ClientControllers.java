@@ -1,7 +1,6 @@
 package com.example.ebank.Controllers;
 
 import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Compte_Bancaire;
 import com.example.ebank.Entity.Controlle;
 import com.example.ebank.Entity.EtatCompte;
 import com.example.ebank.Repository.IClientRepo;
@@ -12,7 +11,6 @@ import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
 import com.example.ebank.Services.Dtos.Comptes_BancaireDtos.Compte_BancaireOutputDto;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientOutputMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

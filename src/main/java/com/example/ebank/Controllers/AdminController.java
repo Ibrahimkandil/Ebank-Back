@@ -6,7 +6,6 @@ import com.example.ebank.Services.AdminService;
 import com.example.ebank.Services.Dtos.AdminsDtos.AdminInputDto;
 import com.example.ebank.Services.Dtos.AdminsDtos.AdminOutputDto;
 import com.example.ebank.Services.Dtos.AgenceDto.AgenceOutputDto;
-import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeInputDto;
 import com.example.ebank.Services.Dtos.EmployeeDtos.EmployeeOutputDto;
 import com.example.ebank.Services.Dtos.contrat_preteDtos.contrat_preteOutputDto;
@@ -27,11 +26,8 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
 
 @RestController
 @RequestMapping("/api/v1/admin")

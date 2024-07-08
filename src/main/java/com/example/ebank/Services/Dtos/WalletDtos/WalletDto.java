@@ -1,7 +1,6 @@
 package com.example.ebank.Services.Dtos.WalletDtos;
 
-import com.example.ebank.Entity.Client;
-import jakarta.persistence.*;
+
 
 import java.io.Serializable;
 import java.util.Objects;

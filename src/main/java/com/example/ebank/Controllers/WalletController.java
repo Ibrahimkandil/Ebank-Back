@@ -11,7 +11,6 @@ import com.example.ebank.Services.Dtos.WalletDtos.WalletOutputDto;
 import com.example.ebank.Services.Mappers.WalletMappers.WalletInputMapper;
 import com.example.ebank.Services.Mappers.WalletMappers.WalletOutputMapper;
 import com.example.ebank.Services.WalletService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
