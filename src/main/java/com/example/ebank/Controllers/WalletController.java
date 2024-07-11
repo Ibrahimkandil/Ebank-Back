@@ -1,10 +1,9 @@
 package com.example.ebank.Controllers;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Compte_Bancaire;
-import com.example.ebank.Entity.Wallet;
+import com.example.ebank.Entity.*;
 import com.example.ebank.Repository.Compte_BancaireRepository;
 import com.example.ebank.Repository.IClientRepo;
+import com.example.ebank.Repository.IwalletHistoryRepo;
 import com.example.ebank.Repository.IwalletRepo;
 import com.example.ebank.Services.Dtos.WalletDtos.WalletInputDto;
 import com.example.ebank.Services.Dtos.WalletDtos.WalletOutputDto;
@@ -18,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +42,8 @@ public class WalletController {
     private IwalletRepo iwalletRepo;
     @Autowired
     private Compte_BancaireRepository compteBancaireRepository;
+    @Autowired
+    private IwalletHistoryRepo iwalletHistoryRepo;
     // Créez une instance de RestTemplate directement dans le contrôleur
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -86,6 +88,19 @@ public class WalletController {
             iwalletRepo.saveAndFlush(wallet);
             compteBancaire.setBalance(compteBancaire.getBalance()-Indinar);
             compteBancaireRepository.saveAndFlush(compteBancaire);
+            WalletHistorique walletHistorique=new WalletHistorique();
+            walletHistorique.setCompte_Bancaire_Id(compteBancaire.getId());
+            walletHistorique.setCurrency(wallet.getCurrency());
+            walletHistorique.setDate_Creation(ZonedDateTime.now());
+            walletHistorique.setAmount(Indinar);
+            if(Indinar>0) {
+                walletHistorique.setTypeWallet(typeWallet.BOUGHT);
+            }else {
+                walletHistorique.setTypeWallet(typeWallet.SOLD);
+            }
+            iwalletHistoryRepo.saveAndFlush(walletHistorique);
+
+
 
             return ResponseEntity.status(HttpStatus.OK).body("Wallet Updated");
         }else {
