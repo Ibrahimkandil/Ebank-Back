@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TransfertRepository extends JpaRepository<Transfert, Long> {
+public interface    TransfertRepository extends JpaRepository<Transfert, Long> {
     @Query("SELECT t FROM Transfert t WHERE t.idCompteDestinations.id = :id OR t.idCompteSource.id = :id")
     Optional<List<Transfert>> findByIdClient(@Param("id") long id);
     @Query("SELECT t.Date, SUM(t.amount), SUM(t.amount) " +
