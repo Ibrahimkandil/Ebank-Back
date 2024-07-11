@@ -50,7 +50,18 @@ public class ClientControllers {
         return clientService.getClientById(id);
     }
 
-
+    @PatchMapping("Confirmation_compte/{id}")
+    public ResponseEntity<Object> Confirmation_compte(@PathVariable Long id, @RequestBody SignatureCompte signature) throws Exception {
+        try {
+            Controlle controlle = iControlleRepo.getControlleByClientIdANDType(id, "CLIENT").get();
+            controlle.setConfirmation(signature.getImage_data());
+            controlle.setEtatCompte(EtatCompte.ACTIF);
+            iControlleRepo.saveAndFlush(controlle);
+            return ResponseEntity.ok().body("{\"message\": \"Votre compte est ACTIF\"}");
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body("{\"message\": \"Erreur lors d'Activation\"}");
+        }
+    }
     @PatchMapping("Demande_Suppression/{id}")
     public ResponseEntity<Object> Demande_Suppression(@PathVariable Long id, @RequestBody SignatureCompte signature) throws Exception {
         try {
