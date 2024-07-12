@@ -77,6 +77,7 @@ public class WalletController {
     }
     @PatchMapping("updateWallet")
     public  ResponseEntity<Object> UpdateWallet(@RequestBody UpdateDataWallet updateDataWallet){
+        WalletHistorique walletHistorique=new WalletHistorique();
         Wallet wallet = iwalletRepo.findById(updateDataWallet.getId_wallet()).get();
         Compte_Bancaire compteBancaire=compteBancaireRepository.findById(wallet.getCompteBancaire().getId()).get();
 
@@ -88,7 +89,6 @@ public class WalletController {
             iwalletRepo.saveAndFlush(wallet);
             compteBancaire.setBalance(compteBancaire.getBalance()-Indinar);
             compteBancaireRepository.saveAndFlush(compteBancaire);
-            WalletHistorique walletHistorique=new WalletHistorique();
             walletHistorique.setCompte_Bancaire_Id(compteBancaire.getId());
             walletHistorique.setCurrency(wallet.getCurrency());
             walletHistorique.setDate_Creation(ZonedDateTime.now());
@@ -102,9 +102,18 @@ public class WalletController {
 
 
 
+
             return ResponseEntity.status(HttpStatus.OK).body("Wallet Updated");
         }else {
             compteBancaire.setBalance(compteBancaire.getBalance()+wallet.getBalance()/updateDataWallet.getRate());
+
+            walletHistorique.setCompte_Bancaire_Id(compteBancaire.getId());
+            walletHistorique.setCurrency(wallet.getCurrency());
+            walletHistorique.setDate_Creation(ZonedDateTime.now());
+            walletHistorique.setAmount(wallet.getBalance()/updateDataWallet.getRate());
+
+            walletHistorique.setTypeWallet(typeWallet.SOLD);
+            iwalletHistoryRepo.saveAndFlush(walletHistorique);
             compteBancaireRepository.saveAndFlush(compteBancaire);
             iwalletRepo.deleteById(updateDataWallet.getId_wallet());
             return ResponseEntity.status(HttpStatus.OK).body("Wallet DELETED");
@@ -131,6 +140,18 @@ public class WalletController {
             Wallet.setClient(client);
         Wallet createdWallet = walletService.createWallet(Wallet);
         WalletOutputDto outputWallet = this.walletOutputMapper.toDto(createdWallet);
+
+            WalletHistorique walletHistorique=new WalletHistorique();
+            walletHistorique.setCompte_Bancaire_Id(compteBancaire.getId());
+            walletHistorique.setCurrency(wallet.getCurrency());
+            walletHistorique.setDate_Creation(ZonedDateTime.now());
+            walletHistorique.setAmount(Indinar);
+            if(Indinar>0) {
+                walletHistorique.setTypeWallet(typeWallet.BOUGHT);
+            }else {
+                walletHistorique.setTypeWallet(typeWallet.SOLD);
+            }
+            iwalletHistoryRepo.saveAndFlush(walletHistorique);
         return ResponseEntity.status(HttpStatus.CREATED).body(outputWallet);
         }catch( Exception e ) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Lors du Saugarde de Wallet");
@@ -190,6 +211,20 @@ public class WalletController {
         }
 
     }
+    @GetMapping("history/{id}")
+    public ResponseEntity<Object> getWalletHistory(@PathVariable  Long id) throws Exception {
+        try {
+            Compte_Bancaire compteBancaire=compteBancaireRepository.findById(id).get();
+
+            List<WalletHistorique> walletHistoriqueList=iwalletHistoryRepo.getAllWalletsByCompte_Bancaire_Id(compteBancaire.getId()).get();
+            return ResponseEntity.status(HttpStatus.OK).body(walletHistoriqueList);
+        }catch( Exception e ) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERROR Lors de la recuperation de l'historique de Wallets");
+
+        }
+        }
+
+
 }
 class currencyName{
     private String currency;
