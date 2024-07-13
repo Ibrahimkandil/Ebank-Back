@@ -113,6 +113,12 @@ public class EmailService {
             return FileCopyUtils.copyToString(reader);
         }
     }
+    private String loadEmailTemplateSuppression() throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:email-controlle.html");
+        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            return FileCopyUtils.copyToString(reader);
+        }
+    }
 
     public void sendEmailContact(String to, String sujet, String text,String username) throws Exception {
         MimeMessage message = mailSender.createMimeMessage();
@@ -122,6 +128,20 @@ public class EmailService {
                 .replace("{{username}}", username)
                 .replace("{{sujet}}", sujet)
                 .replace("{{text}}", text);
+
+        helper.setTo(to);
+        helper.setSubject(sujet);
+        helper.setText(emailContent, true);
+
+        mailSender.send(message);
+    }
+    public void sendEmailSuppression(String to, String sujet, String response,String username) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        String emailContent = loadEmailTemplateContact()
+                .replace("{{username}}", username)
+                .replace("{{reponse}}", response);
 
         helper.setTo(to);
         helper.setSubject(sujet);

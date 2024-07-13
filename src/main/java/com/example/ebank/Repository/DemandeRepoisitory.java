@@ -15,4 +15,7 @@ public interface DemandeRepoisitory extends JpaRepository <Demande,Long> {
     @Query("SELECT d FROM Demande d WHERE d.client.id = :id")
     Optional<List<Demande>> findByIdClient(@Param("id") long id);
 
+    @Query("SELECT d FROM Demande d WHERE d.client.id = :id ")
+    Optional<List<Demande>> findByIdClientAndEtat(@Param("id") long id);
+
 }

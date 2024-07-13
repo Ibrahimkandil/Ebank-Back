@@ -1,10 +1,7 @@
 package com.example.ebank.Controllers;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Controlle;
-import com.example.ebank.Entity.EtatCompte;
-import com.example.ebank.Repository.IClientRepo;
-import com.example.ebank.Repository.IControlleRepo;
+import com.example.ebank.Entity.*;
+import com.example.ebank.Repository.*;
 import com.example.ebank.Services.ClientService;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
@@ -16,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -33,6 +32,12 @@ public class ClientControllers {
     private ClientInputMapper clientInputMapper;
     @Autowired
     private IControlleRepo iControlleRepo;
+    @Autowired
+    private IwalletRepo iwalletRepo;
+    @Autowired
+    private Compte_BancaireRepository compteBancaireRepository;
+    @Autowired
+    private DemandeRepoisitory demandeRepoisitory;
 
 
 
@@ -117,6 +122,32 @@ public ResponseEntity<Object> updateClient(@PathVariable Long id, @RequestBody C
         return ResponseEntity.status(HttpStatus.CONFLICT).body("{\"message\":\"Erroor Password Typed and password In DB are not the Same\"}");
 
     }
+
+    }
+
+    @GetMapping("/fetchData/{id}")
+    public ResponseEntity<Object> fetchData(@PathVariable Long id) throws  Exception{
+        try {
+
+
+        List Objects = new ArrayList();
+        List<Wallet> wallets = iwalletRepo.findByClientId(id).get();
+        List<Compte_Bancaire> compteBancaires= compteBancaireRepository.findByIdClient(id).get();
+        List<Demande> demandes = demandeRepoisitory.findByIdClientAndEtat(id).get();
+        Map<String , List<Wallet>> map = Map.of("wallets",wallets);
+        Map<String , List<Compte_Bancaire>> map1 = Map.of("compteBancaires",compteBancaires);
+        Map<String , List<Demande>> map2 = Map.of("demandes",demandes);
+
+        Objects.add(map);
+        Objects.add(map1);
+        Objects.add(map2);
+            return ResponseEntity.ok().body(Objects);
+
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body("{\"message\": \"Erreur lors de la récupération des données\"}");
+
+        }
+
 
     }
 }
