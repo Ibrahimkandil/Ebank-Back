@@ -1,10 +1,12 @@
 package com.example.ebank.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -22,5 +24,6 @@ public class Transaction implements Serializable {
     @Column(name = "Type")
     private type_transaction type;
     @Column(name = "Date_Expiration")
-    private ZonedDateTime Date_Expiration;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date Date_Expiration;
 }
