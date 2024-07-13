@@ -1,6 +1,5 @@
 package com.example.ebank.Controllers;
 
-import com.example.ebank.Entity.Transaction;
 import com.example.ebank.Entity.Transfert;
 import com.example.ebank.Services.ITransfertService;
 import org.springframework.beans.factory.annotation.Autowired;

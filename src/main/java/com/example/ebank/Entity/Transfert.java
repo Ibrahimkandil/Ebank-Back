@@ -1,9 +1,11 @@
 package com.example.ebank.Entity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -16,7 +18,8 @@ public class Transfert implements Serializable {
     @Column(name = "Montant")
     private double amount;
     @Column(name="Date")
-    private ZonedDateTime Date;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date Date;
     @ManyToOne
     @JoinColumn(name = "Compte Source")
     private Client idCompteSource;
