@@ -139,8 +139,8 @@ public class EmailService {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        String emailContent = loadEmailTemplateContact()
-                .replace("{{username}}", username)
+        String emailContent = loadEmailTemplateSuppression()
+                .replace("{{userName}}", username)
                 .replace("{{reponse}}", response);
 
         helper.setTo(to);

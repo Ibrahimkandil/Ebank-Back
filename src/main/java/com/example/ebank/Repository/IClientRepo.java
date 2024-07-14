@@ -26,8 +26,10 @@ Optional<Client> findByEmail(@Param("email") String email);
     @Query("SELECT CONCAT(c.first_name, ' ', c.last_name) AS username FROM Client c WHERE c.Email = :email")
     Optional<String> getUserNameByEmail(@Param("email") String email);
 //    Optional<Client> findByIdentificationNumber(String id);
-    @Query("SELECT COUNT(c), c.addedBy.id FROM Client c GROUP BY c.addedBy.id")
+    @Query("SELECT COUNT(c), c.addedBy.id FROM Client c  WHERE  c.addedBy is NOT NULL GROUP BY c.addedBy.id ")
     Optional<List<Object[]>> countClientsByEmployee();
+    @Query("SELECT  c FROM Client c where c.addedBy.id = :id_employee")
+    Optional<List<Client>> getClientsByEmployee(@Param("id_employee") Long id_employee);
 
 }
 

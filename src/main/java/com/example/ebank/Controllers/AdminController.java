@@ -27,10 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -51,6 +48,8 @@ public class AdminController {
     private AgenceOutputMapper agenceOutputMapper;
     @Autowired
     private IAgenceRepo iAgenceRepo;
+    @Autowired
+    private DemandeRepoisitory demandeRepoisitory;
 
     @Autowired
     private IAdminRepo iAdminRepo;
@@ -70,6 +69,10 @@ public class AdminController {
     private ClientPostOutMapper clientPostOutMapper;
     @Autowired
     private EmployeePOSTOutputMapper employeePOSTOutputMapper;
+    @Autowired
+    private IwalletRepo iwalletRepo;
+    @Autowired
+    private Compte_BancaireRepository Compte_BancaireRepository;
 
     @GetMapping
     public  String SayHello(){
@@ -178,7 +181,16 @@ public class AdminController {
     @GetMapping("/clients-by-employee")
     public ResponseEntity<Object> getClientsByEmployee()  throws Exception{
         try {
-            List<Object[]> results = iClientRepo.countClientsByEmployee().get();
+                List<Object[]> results = iClientRepo.countClientsByEmployee().get();
+//            Iterator<Object[]> iterator = results.iterator();
+//
+//            while (iterator.hasNext()) {
+//                Object[] array = iterator.next();
+//                Client client = iClientRepo.findById((Long) array[1]).get();
+//                if (client.getAddedBy() == null) {
+//                    iterator.remove();
+//                }
+//            }
 
             // Convert Object[] to Map<Long, Long> for easier JSON serialization
             List<Map<Long, Long>> clientCounts = results.stream()
@@ -262,41 +274,70 @@ public class AdminController {
     }
 
 
-    @PostMapping("/supprimer")
+        @PostMapping("/supprimer")
     public ResponseEntity<String> SuppressionUser( @RequestBody Email_du_Suppression emailDuSuppression) {
+
 
         EmailResponse emailResponse = new EmailResponse();
         try {
-        String username;
-        if(emailDuSuppression.type=="Client"){
-           Client  user = iClientRepo.findById(emailDuSuppression.getId()).get();
-            username = user.getLast_name()+" "+ user.getFirst_name();
-            iClientRepo.delete(user);
-        }else {
-            Employee user = iEmployeeRepo.findById(emailDuSuppression.getId()).get();
-            username = user.getLast_name()+" "+ user.getName();
-            iEmployeeRepo.delete(user);
 
 
-        }
+            String username="";
+
+                if(emailDuSuppression.getReponse().equals("DELETE") ){
+
+                if (  emailDuSuppression.type.equals("Client")) {
+                    Client user = iClientRepo.findById(emailDuSuppression.getId()).get();
+                    username = user.getLast_name() + " " + user.getFirst_name();
+                    List<Wallet> wallets=iwalletRepo.findByClientId(user.getId()).get();
+                    for(Wallet wallet : wallets){
+                        iwalletRepo.deleteById(wallet.getId());
+                    }
+                    List<Compte_Bancaire> compteBancaires=Compte_BancaireRepository.findByIdClient(user.getId()).get();
+                    for(Compte_Bancaire compteBancaire:compteBancaires){
+                        compteBancaire.setClient(null);
+                        Compte_BancaireRepository.saveAndFlush(compteBancaire);
+                    }
 
 
 
 
+                    iClientRepo.deleteById(user.getId());
+                } else {
+                    Employee user = iEmployeeRepo.findById(emailDuSuppression.getId()).get();
+                    username = user.getLast_name() + " " + user.getName();
+                    List<Client> clients=iClientRepo.getClientsByEmployee(user.getId()).get();
+                    for(Client client:clients){
+                        client.setAddedBy(null);
+                    }
+                    iClientRepo.saveAllAndFlush(clients);
+                    iEmployeeRepo.delete(user);
 
-            this.emailService.sendEmailContact(emailDuSuppression.getTo(),emailDuSuppression.getSujet(),emailDuSuppression.getReponse(),username);
-           Controlle controlle=iControlleRepo.getControlleByClientIdANDType(emailDuSuppression.getId(),emailDuSuppression.getType()).get();
-           controlle.setSuppresion(emailDuSuppression.getImage_data());
-           controlle.setEtatCompte(EtatCompte.SUPPRIME);
-           iControlleRepo.saveAndFlush(controlle);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Email a était Envoyé vers Le Client");
+                }
+                }
+
+
+                this.emailService.sendEmailSuppression(emailDuSuppression.getTo(), emailDuSuppression.getSujet(), emailDuSuppression.getReponse(), username);
+                Controlle controlle = iControlleRepo.getControlleByClientIdANDType(emailDuSuppression.getId(), emailDuSuppression.getType()).get();
+                if(emailDuSuppression.getReponse().equals("DELETE")){
+                controlle.setSuppresion(emailDuSuppression.getImage_data());
+                controlle.setEtatCompte(EtatCompte.SUPPRIME);
+                iControlleRepo.saveAndFlush(controlle);
+                }else{
+                    controlle.setDemande_suppression(null);
+                    controlle.setEtatCompte(EtatCompte.ACTIF);
+                    iControlleRepo.saveAndFlush(controlle);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body("Email a était Envoyé vers Le Client");
+
 
         } catch (Exception e) {
             emailResponse.setResponse("Error sending email: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emailResponse.toString());
         }
         //       iclientRepo.save(client1);
+
     }
 }
 
