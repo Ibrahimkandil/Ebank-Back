@@ -21,9 +21,9 @@ public class Compte_BancaireController {
         return Compte_BancaireService.addCompte(compte);
     }
 
-    @GetMapping(path = "/get/{id}")
-    public Compte_Bancaire getCompte (@PathVariable("id") Long id){
-        return Compte_BancaireService.getCompte(id);
+    @GetMapping(path = "/get/{accountNumber}")
+    public Compte_Bancaire getCompte (@PathVariable("accountNumber") String accountNumber){
+        return Compte_BancaireService.getCompte(accountNumber);
     }
 
     @GetMapping(path = "/get")
@@ -34,8 +34,8 @@ public class Compte_BancaireController {
     public Compte_Bancaire updateCompte(@PathVariable("id") Long id, @RequestBody Compte_Bancaire compte){
         return Compte_BancaireService.updateCompte(id, compte);
     }
-    @DeleteMapping(path = "/delete/{id}")
-    public void deleteCompte(@PathVariable("id") Long id){
-        Compte_BancaireService.deleteCompte(id);
+    @DeleteMapping(path = "/delete/{accountNumber}")
+    public void deleteCompte(@PathVariable("accountNumber") String accountNumber){
+        Compte_BancaireService.deleteCompte(accountNumber);
     }
 }

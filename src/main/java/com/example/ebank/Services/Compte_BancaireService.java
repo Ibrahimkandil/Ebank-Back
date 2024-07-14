@@ -22,8 +22,8 @@ public class Compte_BancaireService implements ICompte_BancaireService{
     }
 
     @Override
-    public Compte_Bancaire getCompte(Long id) {
-        Optional<Compte_Bancaire> compte = Compte_BancaireRepo.findById(id);
+    public Compte_Bancaire getCompte(String accountNumber) {
+        Optional<Compte_Bancaire> compte = Compte_BancaireRepo.findByAccountNumber(accountNumber);
         if (compte.isPresent()) {
             return compte.get();
         }
@@ -42,18 +42,18 @@ public class Compte_BancaireService implements ICompte_BancaireService{
             Compte_Bancaire compte = oldCompte.get();
 
             compte.setBalance(newCompte.getBalance());
+            compte.setAccount_type(newCompte.getAccount_type());
             compte.setClosing_date(newCompte.getClosing_date());
             compte.setInterest_rate(newCompte.getInterest_rate());
-            compte.setDate_d_ajout(newCompte.getDate_d_ajout());
             return Compte_BancaireRepo.save(compte);
         }
         return null;
     }
     @Override
-    public void deleteCompte(Long id){
-        Optional<Compte_Bancaire> compte = Compte_BancaireRepo.findById(id);
+    public void deleteCompte(String accountNumber){
+        Optional<Compte_Bancaire> compte = Compte_BancaireRepo.findByAccountNumber(accountNumber);
         if (compte.isPresent()) {
-            Compte_BancaireRepo.deleteById(id);
+            Compte_BancaireRepo.deleteById(compte.get().getId());
         }
     }
 }
