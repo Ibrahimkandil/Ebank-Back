@@ -20,7 +20,7 @@ public class Compte_Bancaire implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "Numéro_de_compte")
-    private String account_number;
+    private String accountNumber;
     @Column(name = "Solde")
     private double balance;
     @Column(name = "Date_d'ouverture")
@@ -33,9 +33,6 @@ public class Compte_Bancaire implements Serializable {
     private Date closing_date;
     @Column(name = "Taux_d'intérêt")
     private double interest_rate;
-    @Column(name = "Date_d'ajout")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date Date_d_ajout;
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
