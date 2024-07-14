@@ -17,5 +17,7 @@ public interface IwalletRepo extends JpaRepository<Wallet,Long> {
     Wallet findByClientIdAndCurrency(@Param("id") Long id,@Param("currency") String currency,@Param("account_number") String account_number);
     @Query("SELECT w FROM Wallet w WHERE w.client.id = :id_client and w.compteBancaire.id =:id_compte")
     Optional<List<Wallet>> getAllWalletsByClientIdANDCompteId(@Param("id_client") Long id_client,@Param("id_compte") Long id_compte);
+    @Query("DELETE Wallet w  WHERE w.client.id = :id_client")
+    Optional<List<Wallet>> DeleteAllWalletsByClientIdANDCompteId(@Param("id_client") Long id_client);
 
 }

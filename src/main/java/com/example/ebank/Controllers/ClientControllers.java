@@ -1,22 +1,30 @@
 package com.example.ebank.Controllers;
 
-import com.example.ebank.Entity.Client;
-import com.example.ebank.Entity.Controlle;
-import com.example.ebank.Entity.EtatCompte;
-import com.example.ebank.Repository.IClientRepo;
-import com.example.ebank.Repository.IControlleRepo;
+import com.example.ebank.Entity.*;
+import com.example.ebank.Repository.*;
 import com.example.ebank.Services.ClientService;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientInputDto;
 import com.example.ebank.Services.Dtos.ClientDtos.ClientOutputDto;
 import com.example.ebank.Services.Dtos.Comptes_BancaireDtos.Compte_BancaireOutputDto;
+import com.example.ebank.Services.Dtos.DemandeDtos.DemandeOutputDto;
+import com.example.ebank.Services.Dtos.WalletDtos.WalletOutputDto;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientOutputMapper;
+import com.example.ebank.Services.Mappers.Compte_BancaireMappers.Compte_BancaireOutputMapper;
+import com.example.ebank.Services.Mappers.DemandeMappers.DemandeOutputMapper;
+import com.example.ebank.Services.Mappers.WalletMappers.WalletOutputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import com.example.ebank.Services.Mappers.contrat_preteMappers.contrat_preteOutputMapper;
+import com.example.ebank.Services.Dtos.contrat_preteDtos.contrat_preteOutputDto;
 
 
 @RestController
@@ -33,6 +41,24 @@ public class ClientControllers {
     private ClientInputMapper clientInputMapper;
     @Autowired
     private IControlleRepo iControlleRepo;
+    @Autowired
+    private IwalletRepo iwalletRepo;
+    @Autowired
+    private Compte_BancaireRepository compteBancaireRepository;
+    @Autowired
+    private DemandeRepoisitory demandeRepoisitory;
+    @Autowired
+    private WalletOutputMapper walletOutputMapper;
+    @Autowired
+    private Compte_BancaireOutputMapper Compte_BancaireOutputMapper;
+    @Autowired
+    private DemandeOutputMapper demandeOutputMapper;
+    @Autowired
+    private ContratRepository contratRepository;
+    @Autowired
+    private contrat_preteOutputMapper contratPreteOutputMapper;
+    @Autowired
+    private IwalletHistoryRepo iwalletHistoryRepo;
 
 
 
@@ -118,6 +144,83 @@ public ResponseEntity<Object> updateClient(@PathVariable Long id, @RequestBody C
 
     }
 
+    }
+
+    @GetMapping("/fetchData/{id}")
+    public ResponseEntity<Object> fetchData(@PathVariable Long id) throws  Exception{
+        try {
+
+
+        List Objects = new ArrayList();
+        List<Wallet> wallets = iwalletRepo.findByClientId(id).get();
+        List<WalletOutputDto> walletOutputDtos=wallets.stream().map(walletOutputMapper::toDto).collect(Collectors.toList());
+
+            List<Compte_Bancaire> compteBancaires= compteBancaireRepository.findByIdClient(id).get();
+            List<Compte_BancaireOutputDto> compteBancaireOutputDtos=compteBancaires.stream().map(Compte_BancaireOutputMapper::toDto).collect(Collectors.toList());
+
+            List<Demande> demandes = demandeRepoisitory.findByIdClientAndEtat(id).get();
+            List<DemandeOutputDto> demandeOutputDtos=demandes.stream().map(demandeOutputMapper::toDto).collect(Collectors.toList());
+            List<contrat_prete> contrat_pretes= this.contratRepository.findByIdClientAAndEtatContrat(id,etatContrat.ACTIF).get();
+            List<contrat_preteOutputDto> contratPreteOutputDtos=contrat_pretes.stream().map(contratPreteOutputMapper::toDto).collect(Collectors.toList());
+
+
+
+            Map<String , List<WalletOutputDto>> map = Map.of("wallets",walletOutputDtos);
+        Map<String , List<Compte_BancaireOutputDto>> map1 = Map.of("compteBancaires",compteBancaireOutputDtos);
+        Map<String , List<DemandeOutputDto>> map2 = Map.of("demandes",demandeOutputDtos);
+        Map<String , List<contrat_preteOutputDto>> map3 = Map.of("contrats",contratPreteOutputDtos);
+
+        Objects.add(map);
+        Objects.add(map1);
+        Objects.add(map2);
+        Objects.add(map3);
+            return ResponseEntity.ok().body(Objects);
+
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body("{\"message\": \"Erreur lors de la récupération des données\"}");
+
+        }
+
+
+    }
+
+    @DeleteMapping("/ClearDatas/{id}")
+    public ResponseEntity<Object> ClearDatas(@PathVariable Long id) {
+        try {
+            List<Wallet> wallets = iwalletRepo.findByClientId(id).get();
+            List<Compte_Bancaire> compteBancaires= compteBancaireRepository.findByIdClient(id).get();
+            List<Demande> demandes = demandeRepoisitory.findByIdClient(id).get();
+            List<contrat_prete> contrat_pretes= this.contratRepository.findByIdClient(id).get();
+            for(Wallet wallet:wallets){
+                WalletHistorique wh=new WalletHistorique();
+                wh.setAmount(wallet.getBalance());
+                wh.setCurrency(wallet.getCurrency());
+                wh.setCompte_Bancaire_Id(wallet.getCompteBancaire().getId());
+                wh.setTypeWallet(typeWallet.SOLD);
+                wh.setDate_Creation(ZonedDateTime.now());
+                iwalletHistoryRepo.saveAndFlush(wh);
+                wallet.setBalance(0);
+                iwalletRepo.saveAndFlush(wallet);
+
+            }
+            for(Compte_Bancaire compteBancaire:compteBancaires){
+                compteBancaire.setBalance(0);
+                compteBancaireRepository.saveAndFlush(compteBancaire);
+            }
+
+            for(Demande demande:demandes){
+
+                demandeRepoisitory.deleteByIdClient(demande.getClient().getId());
+            }
+
+//            iwalletRepo.deleteAll(wallets);
+//            compteBancaireRepository.deleteAll(compteBancaires);
+//            demandeRepoisitory.deleteAll(demandes);
+//            contratRepository.deleteAll(contrat_pretes);
+            return ResponseEntity.ok().body("{\"message\": \"Données supprimées avec succès\"}");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("{\"message\": \"Erreur lors de la suppression des données\"}");
+        }
     }
 }
 
