@@ -13,8 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface IControlleRepo  extends JpaRepository<Controlle,Long> {
-    @Query("SELECT c FROM Controlle c WHERE c.id_User= :id_client and c.type= :type")
-    Optional<Controlle> getControlleByClientIdANDType(@Param("id_client") Long id_client, @Param("type") String type);
+    @Query("SELECT c FROM Controlle c WHERE c.id_User= :id_User and c.type= :type")
+    Optional<Controlle> getControlleByUserIdANDType(@Param("id_User") Long id_User, @Param("type") String type);
 
     @Query("SELECT c FROM Controlle c WHERE c.etatCompte= :type ")
     Optional<List<Controlle>> getControlleByType(@Param("type") EtatCompte type_controlle);

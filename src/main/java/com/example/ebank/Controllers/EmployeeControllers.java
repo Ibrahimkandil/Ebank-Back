@@ -12,6 +12,7 @@ import com.example.ebank.Services.Dtos.ReclamationDtos.ReclamationOutputDto;
 
 import com.example.ebank.Services.EmployeeService;
 import com.example.ebank.Services.Mappers.ClientMappers.ClientInputMapper;
+import com.example.ebank.Services.Mappers.ClientMappers.ClientOutputMapper;
 import com.example.ebank.Services.Mappers.DemandeMappers.DemandeOutputMapper;
 import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeInputMapper;
 import com.example.ebank.Services.Mappers.EmployeeMappers.EmployeeOutputMapper;
@@ -46,6 +47,8 @@ public class EmployeeControllers {
     @Autowired
     private EmailService emailService;
     @Autowired
+    private ClientOutputMapper clientOutputMapper;
+    @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
     private TransactionOutputMapper transactionOutputMapper;
@@ -65,11 +68,13 @@ public class EmployeeControllers {
     private EmployeeInputMapper employeeInputMapper;
     @Autowired
     private EmployeeOutputMapper employeeOutputMapper;
+    @Autowired
+    private Compte_BancaireRepository compteBancaireRepository;
 
     @PatchMapping("Confirmation_compte/{id}")
     public ResponseEntity<Object> Confirmation_compte(@PathVariable Long id, @RequestBody SignatureCompte signature) throws Exception {
         try {
-            Controlle controlle = iControlleRepo.getControlleByClientIdANDType(id, "CLIENT").get();
+            Controlle controlle = iControlleRepo.getControlleByUserIdANDType(id, "EMPLOYEE").get();
             controlle.setConfirmation(signature.getImage_data());
             controlle.setEtatCompte(EtatCompte.ACTIF);
             iControlleRepo.saveAndFlush(controlle);
@@ -83,7 +88,7 @@ public class EmployeeControllers {
         try {
 
 
-        Controlle controlle=iControlleRepo.getControlleByClientIdANDType(id,"EMPLOYEE").get();
+        Controlle controlle=iControlleRepo.getControlleByUserIdANDType(id,"EMPLOYEE").get();
         controlle.setDemande_suppression(signature.getImage_data());
         controlle.setEtatCompte(EtatCompte.DEMANDE);
         iControlleRepo.saveAndFlush(controlle);
@@ -147,6 +152,24 @@ public class EmployeeControllers {
         controlle.setEtatCompte(EtatCompte.VERIFICATION);
         iControlleRepo.save(controlle);
         EmailResponse emailResponse = new EmailResponse();
+        Compte_Bancaire compteBancaire=new Compte_Bancaire();
+        compteBancaire.setClient(client1);
+        Date dd=new Date();
+        dd.setYear(dd.getYear()+2);
+        compteBancaire.setClosing_date(dd.toString());
+        compteBancaire.setOpening_date(ZonedDateTime.now());
+        compteBancaire.setBalance(0);
+        Random random = new Random();
+        StringBuilder accountNumber = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            int digit = random.nextInt(10); // Generate a single digit
+            accountNumber.append(digit); // Append the digit to the account number
+        }
+        compteBancaire.setAccount_number(accountNumber.toString());
+        compteBancaire.setInterest_rate(1);
+        compteBancaire.setAccount_type(Type_Compte.Compte_Courant);
+        compteBancaireRepository.save(compteBancaire);
+
 
         try {
 
@@ -156,7 +179,8 @@ public class EmployeeControllers {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emailResponse);
         }
         //       iclientRepo.save(client1);
-        return ResponseEntity.status(HttpStatus.CREATED).body(client1);
+        ClientOutputDto clientOutputDto=clientOutputMapper.toDto(client1);
+        return ResponseEntity.status(HttpStatus.CREATED).body(clientOutputDto);
     }
 
 
