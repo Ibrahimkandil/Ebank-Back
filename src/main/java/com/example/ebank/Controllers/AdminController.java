@@ -319,7 +319,7 @@ public class AdminController {
 
 
                 this.emailService.sendEmailSuppression(emailDuSuppression.getTo(), emailDuSuppression.getSujet(), emailDuSuppression.getReponse(), username);
-                Controlle controlle = iControlleRepo.getControlleByClientIdANDType(emailDuSuppression.getId(), emailDuSuppression.getType()).get();
+                Controlle controlle = iControlleRepo.getControlleByUserIdANDType(emailDuSuppression.getId(), emailDuSuppression.getType()).get();
                 if(emailDuSuppression.getReponse().equals("DELETE")){
                 controlle.setSuppresion(emailDuSuppression.getImage_data());
                 controlle.setEtatCompte(EtatCompte.SUPPRIME);

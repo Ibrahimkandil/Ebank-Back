@@ -88,14 +88,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
              employee = iEmployeeRepo.findByIdentificationAndPassword(signinRequest.getIdentificationnumber(),signinRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 //
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(Employee.getEmail(), signinRequest.getPassword()));
-            controlle=iControlleRepo.getControlleByClientIdANDType(employee.getId(),"EMPLOYEE").get();
+            controlle=iControlleRepo.getControlleByUserIdANDType(employee.getId(),"EMPLOYEE").get();
             if(controlle.getEtatCompte()== EtatCompte.DEMANDE){
                 throw new IllegalArgumentException("Votre compte est en attente de validation du SUPPRESSION vous ne pouvez pas Connecter");
             }
         }else{
             client = iClientRepo.findByIdentificationAndPassword(signinRequest.getIdentificationnumber(),signinRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(client.getEmail(), signinRequest.getPassword()));
-            controlle=iControlleRepo.getControlleByClientIdANDType(client.getId(),"CLIENT").get();
+            controlle=iControlleRepo.getControlleByUserIdANDType(client.getId(),"CLIENT").get();
             if(controlle.getEtatCompte()== EtatCompte.DEMANDE){
                 throw new IllegalArgumentException("Votre compte est en attente de validation du SUPPRESSION vous ne pouvez pas Connecter");
             }

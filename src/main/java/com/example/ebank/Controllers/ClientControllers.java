@@ -79,7 +79,7 @@ public class ClientControllers {
     @PatchMapping("Confirmation_compte/{id}")
     public ResponseEntity<Object> Confirmation_compte(@PathVariable Long id, @RequestBody SignatureCompte signature) throws Exception {
         try {
-            Controlle controlle = iControlleRepo.getControlleByClientIdANDType(id, "CLIENT").get();
+            Controlle controlle = iControlleRepo.getControlleByUserIdANDType(id, "CLIENT").get();
             controlle.setConfirmation(signature.getImage_data());
             controlle.setEtatCompte(EtatCompte.ACTIF);
             iControlleRepo.saveAndFlush(controlle);
@@ -91,7 +91,7 @@ public class ClientControllers {
     @PatchMapping("Demande_Suppression/{id}")
     public ResponseEntity<Object> Demande_Suppression(@PathVariable Long id, @RequestBody SignatureCompte signature) throws Exception {
         try {
-            Controlle controlle = iControlleRepo.getControlleByClientIdANDType(id, "CLIENT").get();
+            Controlle controlle = iControlleRepo.getControlleByUserIdANDType(id, "CLIENT").get();
             controlle.setDemande_suppression(signature.getImage_data());
             controlle.setEtatCompte(EtatCompte.DEMANDE);
             iControlleRepo.saveAndFlush(controlle);

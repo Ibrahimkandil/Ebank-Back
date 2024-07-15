@@ -63,7 +63,7 @@ public class Employee implements Serializable {
     }
     public String Genrateur_Identification() {
         String password = "0123456789";
-        StringBuilder sb = new StringBuilder("2");
+        StringBuilder sb = new StringBuilder("1");
         for (int i = 0; i <3; i++) {
             int index = (int)(password.length() * Math.random());
             sb.append(password.charAt(index));
