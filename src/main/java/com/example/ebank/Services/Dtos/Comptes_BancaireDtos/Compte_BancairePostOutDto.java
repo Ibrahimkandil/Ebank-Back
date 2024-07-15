@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Compte_BancairePostOutDto {
     private Long id;
-    private String account_number;
+    private String accountNumber;
 
     public Long getId() {
         return id;
@@ -14,12 +14,12 @@ public class Compte_BancairePostOutDto {
         this.id = id;
     }
 
-    public String getAccount_number() {
-        return account_number;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setAccount_number(String account_number) {
-        this.account_number = account_number;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     @Override
@@ -27,19 +27,19 @@ public class Compte_BancairePostOutDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Compte_BancairePostOutDto that = (Compte_BancairePostOutDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(account_number, that.account_number);
+        return Objects.equals(id, that.id) && Objects.equals(accountNumber, that.accountNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, account_number);
+        return Objects.hash(id, accountNumber);
     }
 
     @Override
     public String toString() {
         return "Compte_BancairePostOutDto{" +
                 "id=" + id +
-                ", account_number='" + account_number + '\'' +
+                ", accountNumber='" + accountNumber + '\'' +
                 '}';
     }
 }

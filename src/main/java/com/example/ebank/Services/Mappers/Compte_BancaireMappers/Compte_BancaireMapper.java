@@ -13,8 +13,8 @@ public abstract class Compte_BancaireMapper  implements EntityMapper<Compte_Banc
 
     public abstract Compte_BancaireDto toDto(Compte_Bancaire entity) ;
     public Compte_Bancaire partialUpdate(Compte_Bancaire entity, Compte_Bancaire c1) {
-        if (c1.getAccount_number() != null) {
-            entity.setAccount_number(c1.getAccount_number());
+        if (c1.getAccountNumber() != null) {
+            entity.setAccountNumber(c1.getAccountNumber());
         }
         if (c1.getBalance() != 0) {
             entity.setBalance(c1.getBalance());
@@ -30,9 +30,6 @@ public abstract class Compte_BancaireMapper  implements EntityMapper<Compte_Banc
         }
         if (c1.getInterest_rate() != 0) {
             entity.setInterest_rate(c1.getInterest_rate());
-        }
-        if (c1.getDate_d_ajout() != null) {
-            entity.setDate_d_ajout(c1.getDate_d_ajout());
         }
         if (c1.getClient() != null) {
             entity.setClient(c1.getClient());

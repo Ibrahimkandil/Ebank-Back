@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Compte_BancaireDto implements Serializable {
     private Long id;
 
-    private String account_number;
+    private String accountNumber;
     private double balance;
     private ZonedDateTime opening_date;
 
@@ -29,12 +29,12 @@ public class Compte_BancaireDto implements Serializable {
         this.id = id;
     }
 
-    public String getAccount_number() {
-        return account_number;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setAccount_number(String account_number) {
-        this.account_number = account_number;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public double getBalance() {
@@ -98,19 +98,19 @@ public class Compte_BancaireDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Compte_BancaireDto that = (Compte_BancaireDto) o;
-        return Double.compare(balance, that.balance) == 0 && Double.compare(interest_rate, that.interest_rate) == 0 && Objects.equals(id, that.id) && Objects.equals(account_number, that.account_number) && Objects.equals(opening_date, that.opening_date) && account_type == that.account_type && Objects.equals(closing_date, that.closing_date) && Objects.equals(Date_d_ajout, that.Date_d_ajout) && Objects.equals(client, that.client);
+        return Double.compare(balance, that.balance) == 0 && Double.compare(interest_rate, that.interest_rate) == 0 && Objects.equals(id, that.id) && Objects.equals(accountNumber, that.accountNumber) && Objects.equals(opening_date, that.opening_date) && account_type == that.account_type && Objects.equals(closing_date, that.closing_date) && Objects.equals(Date_d_ajout, that.Date_d_ajout) && Objects.equals(client, that.client);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, account_number, balance, opening_date, account_type, closing_date, interest_rate, Date_d_ajout, client);
+        return Objects.hash(id, accountNumber, balance, opening_date, account_type, closing_date, interest_rate, Date_d_ajout, client);
     }
 
     @Override
     public String toString() {
         return "Compte_BancaireDto{" +
                 "id=" + id +
-                ", account_number='" + account_number + '\'' +
+                ", accountNumber='" + accountNumber + '\'' +
                 ", balance=" + balance +
                 ", opening_date=" + opening_date +
                 ", account_type=" + account_type +

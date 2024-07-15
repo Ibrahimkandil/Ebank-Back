@@ -25,8 +25,6 @@ public class Transaction implements Serializable {
     @Column(name = "Date_Expiration")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date Date_Expiration;
-    /*
     @ManyToOne
     private Compte_Bancaire compte_Bancaire;
-     */
 }
