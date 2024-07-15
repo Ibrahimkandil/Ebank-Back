@@ -24,6 +24,7 @@ public class TransfertService implements ITransfertService{
 
     @Override
     public Transfert addTransfert(Transfert transfert) {
+        /*
         Optional<Compte_Bancaire> oldFirstCompte = Compte_BancaireRepo.findById(transfert.getIdCompteSource().getId());
         Optional<Compte_Bancaire> oldSecondCompte = Compte_BancaireRepo.findById(transfert.getIdCompteDestinations().getId());
         if (oldFirstCompte.isPresent()) {
@@ -36,6 +37,7 @@ public class TransfertService implements ITransfertService{
                 Compte_BancaireRepo.save(newSecondcompte);
             }
         }
+         */
         return TransfertRepo.save(transfert);
     }
 

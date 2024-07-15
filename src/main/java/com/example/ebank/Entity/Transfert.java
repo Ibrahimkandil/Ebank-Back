@@ -2,9 +2,7 @@ package com.example.ebank.Entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -26,9 +24,10 @@ public class Transfert implements Serializable {
     @ManyToOne
     @JoinColumn(name = "Compte Destinataire")
     private Client idCompteDestinations;
+    /*
     @ManyToOne
     private Compte_Bancaire compte_Bancaire;
-
+*/
 }
 
 

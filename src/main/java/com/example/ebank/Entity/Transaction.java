@@ -3,9 +3,7 @@ package com.example.ebank.Entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -23,9 +21,12 @@ public class Transaction implements Serializable {
     private Client client;
     @Column(name = "Type")
     @Enumerated(EnumType.STRING)
-
     private type_transaction type;
     @Column(name = "Date_Expiration")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date Date_Expiration;
+    /*
+    @ManyToOne
+    private Compte_Bancaire compte_Bancaire;
+     */
 }
