@@ -178,7 +178,7 @@ public class WalletController {
     }
     @PostMapping("/Bycurrency")
     public ResponseEntity<Object> getWalletByClientIdAndCurrency(@RequestBody currencyName currencyName) {
-        Wallet wallet = iwalletRepo.findByClientIdAndCurrency(currencyName.getId_client(), currencyName.getCurrency(),currencyName.getAccount_number());
+        Wallet wallet = iwalletRepo.findByClientIdAndCurrency(currencyName.getId_client(), currencyName.getCurrency(),currencyName.getAccountNumber());
         WalletOutputDto outputWallet = this.walletOutputMapper.toDto(wallet);
 
         if (outputWallet != null) {
@@ -194,14 +194,14 @@ public class WalletController {
 class currencyName{
     private String currency;
     private Long id_client;
-    private String account_number;
+    private String accountNumber;
 
-    public String getAccount_number() {
-        return account_number;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setAccount_number(String account_number) {
-        this.account_number = account_number;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public String getCurrency() {
